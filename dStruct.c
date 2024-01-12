@@ -38,15 +38,15 @@ void initializeList(){
 	list = push(list, 1, 0, 0, 0.0, 0.0);
 }
 
-bool isEmpty(struct node*){
-	if (node* == NULL){
+bool isEmpty(struct node* list){
+	if (list == NULL){
 		printf("List is empty!\n");	
 		return 0;
 	}
 	return 1;
 }
 
-struct getEntry(struct node* head, int pid){
+struct getEntry(struct node* list, int pid){
 	struct node *temp;
 	
 	if (isEmpty(list) == 0){
@@ -63,35 +63,115 @@ struct getEntry(struct node* head, int pid){
 	return EXIT_FAILURE;
 }
 
-/* struct node* head - to be used in each function, we are looking through a given data structure*/
+/* struct node* to be used in each function since we are looking through a given data structure*/
 
-struct getEntryByIndex(struct node* head, int ind){
+struct getEntryByIndex(struct node* list, int ind){
 	struct node *temp;
 
 	if (isEmpty(list) == 0){
 		return EXIT_FAILURE;
 	}
 
-	temp = head;
-	while (temp != NULL){
-		
+	int i = 0;
+	temp = list;	
+	while (temp != NULL || i == ind){	
+		temp = temp->next;
+		i++;
 	}
 	
-	
+	// If index is larger than list size, it will be null
+	if (temp == NULL){
+		return EXIT_FAILURE;
+	}
+
+	return temp;
 } 
 
-int getNiceness(int pid);
+int getNiceness(struct node* list, int pid){
+	struct node *temp;
 
-int setNiceness(int pid);
+	if (isEmpty(list) == 0){
+		return EXIT_FAILURE;
+	}
+	
+	temp = list;
+	while (temp != NULL){
+		if (temp->pid == pid){
+			return temp->niceness;
+		}
+	}
+	return EXIT_FAILURE; // PID does not exist
+}
 
-int getStatus(int pid);
 
-int setStatus(int pid);
+int setNiceness(struct node* list, int pid, int new_niceness){
+	struct node *temp;
 
-float getCpuTime(int pid);
+	if (isEmpty(list) == 0){
+		return EXIT_FAILURE;
+	}
+	
+	temp = list;
+	while (temp != NULL){
+		
+		
+	}
 
-float setCpuTime(int pid);
+}
 
+int getStatus(struct node* list, int pid){
+	struct node *temp;
+
+	if (isEmpty(list) == 0){
+		return EXIT_FAILURE;
+	}
+	
+	temp = list;
+	while (temp != NULL){
+		if (temp->pid == pid){
+			return temp->status;
+		}
+	}
+	return EXIT_FAILURE; // PID does not exist
+}
+
+int setStatus(struct node* list, int pid, int new_status){
+	struct node *temp;
+
+	if (isEmpty(list) == 0){
+		return EXIT_FAILURE;
+	}
+	
+	temp = list;
+	while (temp != NULL){
+		
+		
+	}
+
+}
+
+float getCpuTime(struct node* list, int pid){
+	struct node *temp;
+
+	if (isEmpty(list) == 0){
+		return EXIT_FAILURE;
+	}
+	
+	temp = list;
+	while (temp != NULL){
+		if (temp->pid == pid){
+			return temp->cputime;
+		}
+	}
+	return EXIT_FAILURE; // PID does not exist
+}
+
+	
+}
+
+float setCpuTime(struct node* list, int pid, float new_cputime){
+	
+}
 
 void printEntries(struct node* list) {
 	if (list == NULL) {
@@ -113,3 +193,4 @@ void printEntries(struct node* list) {
 }
 
 
+// Fix setters and review code/add comments
