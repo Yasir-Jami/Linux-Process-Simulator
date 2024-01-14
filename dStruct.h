@@ -20,6 +20,8 @@ struct node* push(struct node*, int, int, int, float, float);
 
 struct node* pop(struct node*);
 
+int getSize(struct node*);
+
 /* Getters and Setters */
 struct node* getEntry(struct node*, int pid);
 
