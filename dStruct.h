@@ -19,36 +19,36 @@ struct node* push(struct node*, int, int, int, float, float);
 struct node* pop(struct node*);
 
 /* Getters and Setters */
-struct getEntry(int pid);
+struct getEntry(struct node*, int pid);
 
-struct getEntryByIndex(int ind); 
+struct getEntryByIndex(struct node*, int ind); 
 
-int getNiceness(int pid);
+int getNiceness(struct node*, int pid);
 
-int setNiceness(int pid);
+void setNiceness(struct node*, int pid);
 
-int getStatus(int pid);
+int getStatus(struct node*, int pid);
 
-int setStatus(int pid);
+void setStatus(struct node*, int pid);
 
-float getCpuTime(int pid);
+float getCpuTime(struct node*, int pid);
 
-float setCpuTime(int pid);
+void setCpuTime(struct node*, int pid);
 
 /* Search Functions */
-bool find(int pid);
+bool find(struct node*, int pid);
 
-bool findByNiceness(int niceness); /*If at least one entry with the given niceness exists*/
+bool findByNiceness(struct node*, int niceness); /*If at least one entry with the given niceness exists*/
 
-bool findByStatus(int status);
+bool findByStatus(struct node*, int status);
 
 /* Print Functions*/
 void printEntries(struct node*); /*Print all entries*/
 
-void printEntry(int pid);
+void printEntry(struct node*, int pid);
 
-void printByNiceness(int niceness);
+void printByNiceness(struct node*, int niceness);
 
-void printByStatus(int status);
+void printByStatus(struct node*, int status);
 
 #endif

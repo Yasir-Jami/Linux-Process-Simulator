@@ -36,6 +36,7 @@ void initializeList(){
 	list = push(list, 3, 0, 0, 0.0, 0.0);
 	list = push(list, 2, 0, 0, 0.0, 0.0);
 	list = push(list, 1, 0, 0, 0.0, 0.0);
+	//return list; when we want to make new lists
 }
 
 bool isEmpty(struct node* list){
@@ -104,7 +105,7 @@ int getNiceness(struct node* list, int pid){
 }
 
 
-int setNiceness(struct node* list, int pid, int new_niceness){
+void setNiceness(struct node* list, int pid, int new_niceness){
 	struct node *temp;
 
 	if (isEmpty(list) == 0){
@@ -113,10 +114,10 @@ int setNiceness(struct node* list, int pid, int new_niceness){
 	
 	temp = list;
 	while (temp != NULL){
-		
-		
+		if (temp->pid == pid){
+			temp->niceness = new_niceness;
+		}
 	}
-
 }
 
 int getStatus(struct node* list, int pid){
@@ -135,7 +136,7 @@ int getStatus(struct node* list, int pid){
 	return EXIT_FAILURE; // PID does not exist
 }
 
-int setStatus(struct node* list, int pid, int new_status){
+void setStatus(struct node* list, int pid, int new_status){
 	struct node *temp;
 
 	if (isEmpty(list) == 0){
@@ -144,10 +145,10 @@ int setStatus(struct node* list, int pid, int new_status){
 	
 	temp = list;
 	while (temp != NULL){
-		
-		
+		if (temp->pid == pid){
+			temp->status = new_status;
+		}
 	}
-
 }
 
 float getCpuTime(struct node* list, int pid){
@@ -169,9 +170,28 @@ float getCpuTime(struct node* list, int pid){
 	
 }
 
-float setCpuTime(struct node* list, int pid, float new_cputime){
+void setCpuTime(struct node* list, int pid, float new_cputime){
+	struct node *temp;
+
+	if (isEmpty(list) == 0){
+		return EXIT_FAILURE;
+	}
+	
+	temp = list;
+	while (temp != NULL){
+		if (temp->pid == pid){
+			temp->cputime = new_cputime;
+		}
+	}	
+}
+
+void printEntry(struct node* list, int ind){
+	printf("Print Entry"); // Placeholder
 	
 }
+
+
+
 
 void printEntries(struct node* list) {
 	if (list == NULL) {
