@@ -35,7 +35,7 @@ struct node* initializeList(){
 	list = push(list, 2, 2, 4, 2.1, 32.490);
 	list = push(list, 3, 0, 7, 0.03, 3.2930);
 	list = push(list, 4, 1, 4, 4.5, 1.3849);
-	list = push(list, 5, 1, 8, 2.3, 449.2492);
+	list = push(list, 5, 1, 8, 2.3, 44.2492);
 	list = push(list, 6, 4, 0, 7.2, 2.482902);
 
 	return list;
