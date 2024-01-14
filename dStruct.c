@@ -20,12 +20,10 @@ struct node* push(struct node* list, int _pid, int _status, int _niceness, float
 
 struct node* pop(struct node* list) {
 	struct node* currentNode;
-	currentNode = list->next;
-	//if(currentNode==NULL) {
-	//	return(list);
-	//}
-	free(list);
-	return(currentNode);
+	currentNode = list;
+	list = list->next;
+	free(currentNode);
+	return(list);
 }
 
 // Using default values

@@ -8,8 +8,8 @@ struct node {
 	int pid;
 	int status;
 	int niceness;
-	int cputime;
-	int proctime;
+	float cputime;
+	float proctime;
 	struct node* next;
 };
 
