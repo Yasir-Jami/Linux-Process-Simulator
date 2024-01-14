@@ -51,7 +51,7 @@ struct getEntry(struct node* list, int pid){
 	struct node *temp;
 	
 	if (isEmpty(list) == 0){
-		return EXIT_FAILURE;
+		exit(EXIT_FAILURE);
 	}
 	
 	temp = head;
@@ -61,7 +61,7 @@ struct getEntry(struct node* list, int pid){
 		}
 		temp = temp->next;
 	}
-	return EXIT_FAILURE;
+	exit(EXIT_FAILURE);
 }
 
 /* struct node* to be used in each function since we are looking through a given data structure*/
@@ -70,7 +70,7 @@ struct getEntryByIndex(struct node* list, int ind){
 	struct node *temp;
 
 	if (isEmpty(list) == 0){
-		return EXIT_FAILURE;
+		exit(EXIT_FAILURE);
 	}
 
 	int i = 0;
@@ -82,7 +82,7 @@ struct getEntryByIndex(struct node* list, int ind){
 	
 	// If index is larger than list size, it will be null
 	if (temp == NULL){
-		return EXIT_FAILURE;
+		exit(EXIT_FAILURE);
 	}
 
 	return temp;
@@ -92,7 +92,7 @@ int getNiceness(struct node* list, int pid){
 	struct node *temp;
 
 	if (isEmpty(list) == 0){
-		return EXIT_FAILURE;
+		exit(EXIT_FAILURE);
 	}
 	
 	temp = list;
@@ -101,7 +101,7 @@ int getNiceness(struct node* list, int pid){
 			return temp->niceness;
 		}
 	}
-	return EXIT_FAILURE; // PID does not exist
+	exit(EXIT_FAILURE); // PID does not exist
 }
 
 
@@ -109,7 +109,7 @@ void setNiceness(struct node* list, int pid, int new_niceness){
 	struct node *temp;
 
 	if (isEmpty(list) == 0){
-		return EXIT_FAILURE;
+		exit(EXIT_FAILURE);
 	}
 	
 	temp = list;
@@ -124,7 +124,7 @@ int getStatus(struct node* list, int pid){
 	struct node *temp;
 
 	if (isEmpty(list) == 0){
-		return EXIT_FAILURE;
+		exit(EXIT_FAILURE);
 	}
 	
 	temp = list;
@@ -133,14 +133,14 @@ int getStatus(struct node* list, int pid){
 			return temp->status;
 		}
 	}
-	return EXIT_FAILURE; // PID does not exist
+	exit(EXIT_FAILURE); // PID does not exist
 }
 
 void setStatus(struct node* list, int pid, int new_status){
 	struct node *temp;
 
 	if (isEmpty(list) == 0){
-		return EXIT_FAILURE;
+		exit(EXIT_FAILURE);
 	}
 	
 	temp = list;
@@ -155,7 +155,7 @@ float getCpuTime(struct node* list, int pid){
 	struct node *temp;
 
 	if (isEmpty(list) == 0){
-		return EXIT_FAILURE;
+		exit(EXIT_FAILURE);
 	}
 	
 	temp = list;
@@ -164,7 +164,7 @@ float getCpuTime(struct node* list, int pid){
 			return temp->cputime;
 		}
 	}
-	return EXIT_FAILURE; // PID does not exist
+	exit(EXIT_FAILURE); // PID does not exist
 }
 
 	
@@ -174,7 +174,7 @@ void setCpuTime(struct node* list, int pid, float new_cputime){
 	struct node *temp;
 
 	if (isEmpty(list) == 0){
-		return EXIT_FAILURE;
+		exit(EXIT_FAILURE);
 	}
 	
 	temp = list;
