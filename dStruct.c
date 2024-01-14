@@ -1,12 +1,13 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <stdbool.h>
 #include "dStruct.h"
 
 struct node* push(struct node* list, int _pid, int _status, int _niceness, float _cputime, float _proctime) {
 	struct node* newNode;
 	if ((newNode = malloc(1*sizeof(struct node)))==NULL) {
 		exit(EXIT_FAILURE);
-	} 
+	}
 	newNode->pid= _pid;
 	newNode->status = _status;
 	newNode->niceness = _niceness; 
@@ -28,15 +29,16 @@ struct node* pop(struct node* list) {
 }
 
 // Using default values
-void initializeList(){
-	list = NULL; // NULL: void*
+struct node* initializeList(){
+	struct node* list = NULL; // NULL: void*
 	list = push(list, 6, 0, 0, 0.0, 0.0);
 	list = push(list, 5, 0, 0, 0.0, 0.0);
 	list = push(list, 4, 0, 0, 0.0, 0.0);
 	list = push(list, 3, 0, 0, 0.0, 0.0);
 	list = push(list, 2, 0, 0, 0.0, 0.0);
 	list = push(list, 1, 0, 0, 0.0, 0.0);
-	//return list; when we want to make new lists
+
+	return list;
 }
 
 bool isEmpty(struct node* list){
@@ -47,14 +49,14 @@ bool isEmpty(struct node* list){
 	return false;
 }
 
-struct getEntry(struct node* list, int pid){
+struct node* getEntry(struct node* list, int pid){
 	struct node *temp;
 	
 	if (isEmpty(list) == true){
 		exit(EXIT_FAILURE);
 	}
 	
-	temp = head;
+	temp = list;
 	while (temp != NULL){
 		if (temp->pid == pid){
 			return temp;
@@ -66,7 +68,7 @@ struct getEntry(struct node* list, int pid){
 
 /* struct node* to be used in each function since we are looking through a given data structure*/
 
-struct getEntryByIndex(struct node* list, int ind){
+struct node* getEntryByIndex(struct node* list, int ind){
 	struct node *temp;
 
 	if (isEmpty(list) == true){
@@ -170,9 +172,6 @@ float getCpuTime(struct node* list, int pid){
 		temp = temp->next;
 	}
 	exit(EXIT_FAILURE); // PID does not exist
-}
-
-	
 }
 
 void setCpuTime(struct node* list, int pid, float new_cputime){

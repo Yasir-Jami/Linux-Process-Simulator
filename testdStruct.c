@@ -1,16 +1,17 @@
 #include <stdio.h>
 #include <stdlib.h> 
+#include "dStruct.h"
 
 int main(void) {
 	struct node* list = initializeList();
 	
-	printList(list);
+	printEntries(list);
 	list = pop(list);	
 		
-	printList(list);
+	printEntries(list);
 	
 	list = push(list, 124, 0, 0, 0.0, 0.0);
 	
-	printList(list);
+	printEntries(list);
 	// waow
 }

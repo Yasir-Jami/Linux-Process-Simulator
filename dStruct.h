@@ -1,3 +1,5 @@
+#include <stdbool.h> // Required for bool functions
+
 #ifndef DSTRUCT 
 #define DSTRUCT
 
@@ -11,7 +13,7 @@ struct node {
 	struct node* next;
 };
 
-void initializeList;
+struct node* initializeList();
 
 /* Data Structure (linked list) Operations */
 struct node* push(struct node*, int, int, int, float, float);
@@ -19,21 +21,21 @@ struct node* push(struct node*, int, int, int, float, float);
 struct node* pop(struct node*);
 
 /* Getters and Setters */
-struct getEntry(struct node*, int pid);
+struct node* getEntry(struct node*, int pid);
 
-struct getEntryByIndex(struct node*, int ind); 
+struct node* getEntryByIndex(struct node*, int ind); 
 
 int getNiceness(struct node*, int pid);
 
-void setNiceness(struct node*, int pid);
+void setNiceness(struct node*, int pid, int new_niceness);
 
 int getStatus(struct node*, int pid);
 
-void setStatus(struct node*, int pid);
+void setStatus(struct node*, int pid, int new_status);
 
 float getCpuTime(struct node*, int pid);
 
-void setCpuTime(struct node*, int pid);
+void setCpuTime(struct node*, int pid, float new_cputime);
 
 /* Search Functions */
 bool find(struct node*, int pid);

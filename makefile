@@ -1,10 +1,10 @@
 # Name: Yasir Jami & Cole Doris
 # 360 Lab 1
 
-CC:=gcc
+CC:= gcc
 CFLAGS:= -Wall -std=c11
 
-testStruct: testStruct.o dStruct.o
+testStruct: testdStruct.o dStruct.o
 	$(CC) -o $@ $(CFLAGS) $^
 
 %.o: %.c
