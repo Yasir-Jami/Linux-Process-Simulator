@@ -4,11 +4,12 @@
 #include "dStruct.h"
 
 struct node* push(struct node* list, int _pid, int _status, int _niceness, float _cputime, float _proctime) {
-	struct node* newNode;
+	struct node* newNode;	
+
 	if ((newNode = malloc(1*sizeof(struct node)))==NULL) {
 		exit(EXIT_FAILURE);	
-	}
-	newNode->pid= _pid;
+	}	
+	newNode->pid = _pid;
 	newNode->status = _status;
 	newNode->niceness = _niceness; 
 	newNode->cputime = _cputime;
@@ -29,13 +30,12 @@ struct node* pop(struct node* list) {
 // Using default values
 struct node* initializeList(){
 	struct node* list = NULL; // NULL: void*
-	list = push(list, 1, 3, 2, 1.2, 10.903);
-	list = push(list, 2, 2, 4, 2.1, 32.490);
-	list = push(list, 3, 0, 7, 0.03, 3.2930);
-	list = push(list, 4, 1, 4, 4.5, 1.3849);
-	list = push(list, 5, 1, 8, 2.3, 44.2492);
-	list = push(list, 6, 4, 0, 7.2, 2.482902);
-
+	list = push(list, 6, 3, 2, 1.2, 10.903);
+	list = push(list, 5, 2, 4, 2.1, 32.490);
+	list = push(list, 4, 0, 7, 0.03, 3.2930);
+	list = push(list, 3, 1, 4, 4.5, 1.3849);
+	list = push(list, 2, 1, 8, 2.3, 44.2492);
+	list = push(list, 1, 4, 0, 7.2, 2.482902);
 	return list;
 }
 
@@ -49,7 +49,7 @@ bool isEmpty(struct node* list){
 
 int getSize(struct node* list){
 	if (isEmpty(list) == true){
-		return 0;	
+		return 0;
 	}
 	
 	struct node* temp = list;
@@ -65,8 +65,8 @@ int getSize(struct node* list){
 struct node* getEntry(struct node* list, int pid){
 	if (isEmpty(list) == true){
 		return list;
-	}
-	
+	}	
+
 	struct node *temp = list;
 	while (temp != NULL){
 		if (temp->pid == pid){
@@ -74,10 +74,10 @@ struct node* getEntry(struct node* list, int pid){
 		}
 		temp = temp->next;
 	}
-	return list; // No PID match --> entry not found
-}
 
-/* struct node* to be used in each function since we are looking through a given list*/
+	printf("Entry not found. No PID match.\n");
+	return list; 
+}
 
 struct node* getEntryByIndex(struct node* list, int ind){
 	if (isEmpty(list) == true){
@@ -86,7 +86,7 @@ struct node* getEntryByIndex(struct node* list, int ind){
 
 	int size = getSize(list);
 	if (size < ind+1){
-		printf("Entry not found");
+		printf("Entry not found. Out of bounds.");
 		return list;	
 	}
 
@@ -249,8 +249,10 @@ void printEntries(struct node* list) {
 	} 
 
 	int size = getSize(list);
+	struct node* temp;
 	for(int i = 0; i < size; i++) {
-	    printEntry(list, i);  
+	    printEntry(list, temp->pid);
+	    temp = temp->next;
 	}
 }
 
