@@ -3,17 +3,17 @@
 #include <stdbool.h>
 #include "dStruct.h"
 
-struct node* push(struct node* list, int _pid, int _status, int _niceness, float _cputime, float _proctime) {
+struct node* push(struct node* list, int _pid, int _status, int _niceness, double _cputime, double _proctime) {
 	struct node* newNode;
 	if ((newNode = malloc(1*sizeof(struct node)))==NULL) {
-		exit(EXIT_FAILURE);	
+		exit(EXIT_FAILURE);
 	}
 	newNode->pid= _pid;
 	newNode->status = _status;
-	newNode->niceness = _niceness; 
+	newNode->niceness = _niceness;
 	newNode->cputime = _cputime;
 	newNode->proctime = _proctime;
-	
+
 	newNode->next=list;
 	return(newNode);
 }
@@ -43,7 +43,7 @@ struct node* initializeList(){
 
 bool isEmpty(struct node* list){
 	if (list == NULL){
-		printf("List is empty!\n");	
+		printf("List is empty!\n");
 		return true;
 	}
 	return false;
@@ -51,9 +51,9 @@ bool isEmpty(struct node* list){
 
 int getSize(struct node* list){
 	if (isEmpty(list) == true){
-		return 0;	
+		return 0;
 	}
-	
+
 	struct node* temp = list;
 	int i = 0;
 
@@ -68,7 +68,7 @@ struct node* getEntry(struct node* list, int pid){
 	if (isEmpty(list) == true){
 		return list;
 	}
-	
+
 	struct node *temp = list;
 	while (temp != NULL){
 		if (temp->pid == pid){
@@ -86,21 +86,24 @@ struct node* getEntryByIndex(struct node* list, int ind){
 		return list;
 	}
 
-	int size = getSize(list);
-	if (size < ind+1){
+/*(	int size = getSize(list);
+		if (size < ind+1){
 		printf("Entry not found");
-		return list;	
+		return list;
 	}
-
+*/
 	int i = 0;
 	struct node *temp = list;
-	while (temp != NULL || i == ind){
+	while (temp != NULL || i != ind){
+		if (i == ind) {
+			return temp;
+		}
 		temp = temp->next;
 		i++;
 	}
-	
+
 	return temp;
-} 
+}
 
 int getNiceness(struct node* list, int pid){
 	if (isEmpty(list) == true){
@@ -121,7 +124,7 @@ void setNiceness(struct node* list, int pid, int new_niceness){
 	if (isEmpty(list) == true){
 		return;
 	}
-	
+
 	struct node *temp = list;
 	while (temp != NULL){
 		if (temp->pid == pid){
@@ -135,7 +138,7 @@ int getStatus(struct node* list, int pid){
 	if (isEmpty(list) == true){
 		return -1;
 	}
-	
+
 	struct node *temp = list;
 	while (temp != NULL){
 		if (temp->pid == pid){
@@ -150,7 +153,7 @@ void setStatus(struct node* list, int pid, int new_status){
 	if (isEmpty(list) == true){
 		return;
 	}
-	
+
 	struct node *temp = list;
 	while (temp != NULL){
 		if (temp->pid == pid){
@@ -164,7 +167,7 @@ float getCpuTime(struct node* list, int pid){
 	if (isEmpty(list) == true){
 		return -1.0;
 	}
-	
+
 	struct node *temp = list;
 	while (temp != NULL){
 		if (temp->pid == pid){
@@ -175,11 +178,11 @@ float getCpuTime(struct node* list, int pid){
 	return -1.0; // PID does not exist
 }
 
-void setCpuTime(struct node* list, int pid, float new_cputime){
+void setCpuTime(struct node* list, int pid, double new_cputime){
 	if (isEmpty(list) == true){
 		return;
 	}
-	
+
 	struct node *temp = list;
 	while (temp != NULL){
 		if (temp->pid == pid){
@@ -193,7 +196,7 @@ bool find(struct node* list, int pid){
 	if (isEmpty(list) == true){
 		return false;
 	}
-	
+
 	struct node *temp = list;
 	while (temp != NULL){
 		if (temp->pid == pid){
@@ -208,7 +211,7 @@ bool findByNiceness(struct node* list, int niceness){
 	if (isEmpty(list) == true){
 		return false;
 	}
-	
+
 	struct node *temp = list;
 	while (temp != NULL){
 		if (temp->niceness == niceness){
@@ -223,7 +226,7 @@ bool findByStatus(struct node* list, int status){
 	if (isEmpty(list) == true){
 		return false;
 	}
-	
+
 	struct node *temp = list;
 	while (temp != NULL){
 		if (temp->status == status){
@@ -248,11 +251,12 @@ void printEntry(struct node* list, int pid){
 void printEntries(struct node* list) {
 	if (isEmpty(list) == true){
 		return;
-	} 
-
-	int size = getSize(list);
-	for(int i = 0; i < size; i++) {
-	    printEntry(list, i);  
+	}
+	struct node* temp = list;
+	//int size = size(list);
+	while (temp != NULL) {
+		printEntry(list, temp->pid);
+		temp = temp->next;
 	}
 }
 
@@ -260,11 +264,11 @@ void printByNiceness(struct node* list, int niceness){
 	if (isEmpty(list) == true){
 		return;
 	}
-	
+
 	struct node *temp = list;
 	while (temp != NULL){
 		if (temp->niceness == niceness){
-			printEntry(temp, temp->pid);
+			printEntry(list, temp->pid);
 		}
 		temp = temp->next;
 	}
@@ -275,11 +279,11 @@ void printByStatus(struct node* list, int status){
 	if (isEmpty(list) == true){
 		return;
 	}
-	
+
 	struct node *temp = list;
 	while (temp != NULL){
 		if (temp->status == status){
-			printEntry(temp, temp->pid);	
+			printEntry(temp, temp->pid);
 		}
 		temp = temp->next;
 	}
