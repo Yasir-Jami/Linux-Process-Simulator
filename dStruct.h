@@ -8,15 +8,15 @@ struct node {
 	int pid;
 	int status;
 	int niceness;
-	float cputime;
-	float proctime;
+	double cputime;
+	double proctime;
 	struct node* next;
 };
 
 struct node* initializeList();
 
 /* Data Structure (linked list) Operations */
-struct node* push(struct node*, int, int, int, float, float);
+struct node* push(struct node*, int, int, int, double, double);
 
 struct node* pop(struct node*);
 
@@ -37,7 +37,7 @@ void setStatus(struct node*, int pid, int new_status);
 
 float getCpuTime(struct node*, int pid);
 
-void setCpuTime(struct node*, int pid, float new_cputime);
+void setCpuTime(struct node*, int pid, double new_cputime);
 
 /* Search Functions */
 bool find(struct node*, int pid);
