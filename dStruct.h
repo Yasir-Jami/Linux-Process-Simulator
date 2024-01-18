@@ -8,8 +8,8 @@ struct node {
 	int pid;
 	int status;
 	int niceness;
-	int cputime;
-	int proctime;
+	float cputime;
+	float proctime;
 	struct node* next;
 };
 
@@ -19,6 +19,8 @@ struct node* initializeList();
 struct node* push(struct node*, int, int, int, float, float);
 
 struct node* pop(struct node*);
+
+int getSize(struct node*);
 
 /* Getters and Setters */
 struct node* getEntry(struct node*, int pid);

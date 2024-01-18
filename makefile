@@ -8,7 +8,7 @@ testStruct: testdStruct.o dStruct.o
 	$(CC) -o $@ $(CFLAGS) $^
 
 %.o: %.c
-	$(CC) -c $@ $(CFLAGS) $<
+	$(CC) $(CFLAGS) -c $< -o $@
 
 .PHONY: clean
 
