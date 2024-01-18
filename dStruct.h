@@ -56,4 +56,3 @@ void printByNiceness(struct node*, int niceness);
 void printByStatus(struct node*, int status);
 
 #endif
-
