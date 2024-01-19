@@ -12,11 +12,11 @@ int main(void){
 	struct dirent *file; // Current file being examined
 	int file_count = 0; // Amount of files in newProc
 	char file_contents[50];
-	int niceness; // Current process' niceness
-	double proctime; // Current process' proctime
 	char fileloc[50];
 	char* token; // Used for retrieving niceness and proctime
-
+	int niceness; // Current process' niceness
+	double proctime; // Current process' proctime
+	
 	/* Open newProc directory and check for presence of files*/
 	processDir = opendir(dirname);
 

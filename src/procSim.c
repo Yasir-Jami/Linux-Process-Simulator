@@ -7,6 +7,11 @@
 
 // https://c-for-dummies.com/blog/?p=3246 | Using dirent
 
+// Status Codes:
+// 0: Terminated
+// 1: Ready
+// 2: Running
+
 int main(void){
 	// Queues
 	struct node* ready_queue = NULL; // Queue for processes ready to run
@@ -16,11 +21,14 @@ int main(void){
 	double time_delta = 0.1; // Increment time. Add to cputime for each entry as well
 	// File handling
 	FILE* fp;
+	int file_count = 0; // Number of files in newProc
+	char file_contents[50]; // To store read file contents
+	char fileloc[50]; // Where file pointer will point to
+        char* token; // Used for retrieving niceness and proctime
 	char* dirname = "../newProc"; // Hard-coded
 	DIR *processDir; // Directory pointer, used for newProc.
 	struct dirent *file; // Current file being examined
-	int file_count = 0; // Number of files in newProc
-	char file_contents[50];
+	// Process Variables
 	int niceness; // Current process' niceness
 	double proctime; // Current process' proctime
 
@@ -38,23 +46,28 @@ int main(void){
 			continue;
 		}
 		file_count++; // Used for pid
-		char* fileloc = strncat(processDir, "/");
-		fileloc = strncat(fileloc, file->d_name);
+	
+		strcpy(fileloc, dirname);
+                strncat(fileloc, "/", 2);
+                strncat(fileloc, file->d_name, 30);
 
-		fp = fopen(fileloc, "r"); 	// Fix to read from ../newProc/file
+                // Point to file
+                fp = fopen(fileloc, "r");
+                if (fp == NULL){
+                        printf("Couldn't open file.");
+                }
+		// Read file
+                while (fgets(file_contents, 50, fp)){
+                }
 
-		if (fp == NULL){
-			printf("Couldn't open file.");
-		}
-
-		while (fgets(file_contents, 50, fp)){
-
-
-			
-		}
-		
-		
-
+                // Get niceness
+                token = strtok(file_contents, " ");
+                niceness = atoi(token);
+		// Get proctime
+                token = strtok(NULL, " ");
+                proctime = atof(token);
+                	
+		// Create and push node 
 
 		// Add file niceness and proctime to process	
 		// process, pid, status, niceness, cputime, proctime
@@ -63,7 +76,8 @@ int main(void){
 		// niceness - readin from file
 		// proctime - readin from file
 		printf("Adding %s to ready queue...\n", file->d_name);
-		ready_queue = push(struct node *process, file_count, 1, process->niceness, initial_time, process->proctime);
+		ready_queue = push(struct node *process, file_count, 1, niceness, initial_time, proctime);
+		}
 		/*
 		if (ready_queue == NULL || getSize(ready_queue) < file_count){
 			// Add process from file using the their niceness and status
