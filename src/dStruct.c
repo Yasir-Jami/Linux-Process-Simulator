@@ -86,12 +86,6 @@ struct node* getEntryByIndex(struct node* list, int ind){
 		return list;
 	}
 
-/*(	int size = getSize(list);
-		if (size < ind+1){
-		printf("Entry not found");
-		return list;
-	}
-*/
 	int i = 0;
 	struct node *temp = list;
 	while (temp != NULL || i != ind){
@@ -252,8 +246,8 @@ void printEntries(struct node* list) {
 	if (isEmpty(list) == true){
 		return;
 	}
-	struct node* temp = list;
-	//int size = size(list);
+
+	struct node* temp = list;	
 	while (temp != NULL) {
 		printEntry(list, temp->pid);
 		temp = temp->next;
