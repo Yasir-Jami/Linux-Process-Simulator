@@ -22,7 +22,7 @@ struct node* pop(struct node* list) {
 	struct node* currentNode;
 	currentNode = list;
 	list = list->next;
-	free(currentNode);
+	free(list);
 	return(list);
 }
 

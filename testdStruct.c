@@ -5,11 +5,29 @@
 int main(void) {
 	struct node* list = initializeList();
 
-	struct node* entry = getEntryByIndex(list, 0);
+	printf("List before changing\n");
+	printEntries(list);	
+	printf("###########################################\n");
 
-	//printEntries(list);
+	struct node* entry = pop(list);
 
-	printByStatus(list, 1);
+	//struct node* entry2 = pop(list);
+
+	struct node* emptylist = NULL;
+
+	isEmpty(emptylist);
+
+	printf("Popped Entry: \n");
+	printEntry(entry, entry->pid);
+
+	printf("###########################################");
+
+	//printf("Popped Entry: \n");
+	//printEntry(entry2, entry2->pid);
+
+	printf("###########################################\n");
+
+	printEntries(list);
 
 //	printf("Current PID: %d", list2->pid);
 
