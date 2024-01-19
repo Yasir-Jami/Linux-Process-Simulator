@@ -45,14 +45,24 @@ int main(void){
 		}
 
 		printf("Trial %d\n", file_count);		
-		printf("Current file contents: %s\n", file_contents);
-
-		token = strtok(file_contents, " ");
+		printf("Current file contents: %s", file_contents);
 		
-		niceness = *token;
+		// Get first token (which is niceness)
+		token = strtok(file_contents, " ");
+		niceness = atoi(token);
 
-		printf("Niceness: %d\n", *token);
-		printf("proctime: %f\n", *(token+2));
+		/*
+		while (token != NULL){
+			printf("Current token: %s\n", token);
+			token = strtok(NULL, " ");
+		}
+		*/
+
+		token = strtok(NULL, " ");
+		proctime = atof(token);
+
+		printf("Niceness: %d\n", niceness);
+		printf("proctime: %f\n\n", proctime); // Need to print a double %f
 
 		}
 
