@@ -1,8 +1,9 @@
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
-#include "dStruct.h"
+#include <string.h>
 #include <dirent.h>
+#include "dStruct.h"
 
 // https://c-for-dummies.com/blog/?p=3246 | Using dirent
 
@@ -14,24 +15,46 @@ int main(void){
 	double initial_time = 0.0; // Set cputime to 0 initially
 	double time_delta = 0.1; // Increment time. Add to cputime for each entry as well
 	// File handling
+	FILE* fp;
+	char* dirname = "../newProc"; // Hard-coded
 	DIR *processDir; // Directory pointer, used for newProc.
 	struct dirent *file; // Current file being examined
-	int file_count = 0; // Amount of files in newProc
+	int file_count = 0; // Number of files in newProc
+	char file_contents[50];
+	int niceness; // Current process' niceness
+	double proctime; // Current process' proctime
 
 	/* Open newProc directory and check for presence of files*/
-	processDir = opendir("../newProc");
+	processDir = opendir(dirname);
 
 	if (processDir == NULL){
-		puts("No processes available. Closing program.");
+		printf("No processes available. Closing program.\n");
 		return 1;
 	}
 	
+	// Read files from the new process directory. Add processes to ready queue one by one
 	while ( (file = readdir(processDir)) ){
-		if (strcmp(file->d_name, ".") == 0 || strcmp(file->d_name, "..") == 0){
+		if ((strcmp(file->d_name, ".") == 0) || (strcmp(file->d_name, "..") == 0)){
 			continue;
 		}
-		file_count++;
-		printf("File %3d: %s\n", file_count, file->d_name);
+		file_count++; // Used for pid
+		char* fileloc = strncat(processDir, "/");
+		fileloc = strncat(fileloc, file->d_name);
+
+		fp = fopen(fileloc, "r"); 	// Fix to read from ../newProc/file
+
+		if (fp == NULL){
+			printf("Couldn't open file.");
+		}
+
+		while (fgets(file_contents, 50, fp)){
+
+
+			
+		}
+		
+		
+
 
 		// Add file niceness and proctime to process	
 		// process, pid, status, niceness, cputime, proctime
