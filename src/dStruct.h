@@ -1,7 +1,7 @@
-#include <stdbool.h> // Required for bool functions
-
 #ifndef DSTRUCT 
 #define DSTRUCT
+
+#include <stdbool.h> // Required for bool functions
 
 /* Node struct for linked list and List Initialization */
 struct node {
