@@ -32,12 +32,24 @@ int main(void){
 		}
 		file_count++;
 		printf("File %3d: %s\n", file_count, file->d_name);
-	
-		if (ready_queue == NULL){
-		// Add
-		printf("Ready queue empty. Adding process...\n");
-		}
 
+		// Add file niceness and proctime to process
+		struct node * process;
+		// process, pid, status, niceness, cputime, proctime
+		// pid --> increment based on current file number
+		// status - based on ***?
+		// niceness - readin from file
+		// proctime - readin from file
+		printf("Adding %s to ready queue...\n", file->d_name);
+		ready_queue = push(process, file_count, 1, process->niceness, 0.0, process->proctime);
+	
+		/*
+		if (ready_queue == NULL || getSize(ready_queue) < file_count){
+			// Add process from file using the their niceness and status
+			printf("Adding %s to ready queue...\n", file->d_name);
+		}
+		*/
+	
 		//ready_queue = struct node file; 
 		//running_process = file;
 
@@ -47,15 +59,10 @@ int main(void){
 		while (running_queue != NULL){
 			initial_time += time_delta; 
 			printf("Waiting for %s...\n", running_process);
-		}
-
-		
-	
-	}
-	
+		}	
+		printf("%s finished at %f\n", file->d_name, process->cputime);
+	}	
 	closedir(processDir);
-
-
 
 	return 0;
 }
