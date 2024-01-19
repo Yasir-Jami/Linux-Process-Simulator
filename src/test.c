@@ -50,14 +50,7 @@ int main(void){
 		// Get first token (which is niceness)
 		token = strtok(file_contents, " ");
 		niceness = atoi(token);
-
-		/*
-		while (token != NULL){
-			printf("Current token: %s\n", token);
-			token = strtok(NULL, " ");
-		}
-		*/
-
+	
 		token = strtok(NULL, " ");
 		proctime = atof(token);
 
