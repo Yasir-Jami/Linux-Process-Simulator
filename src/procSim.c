@@ -34,6 +34,7 @@ int main(void){
 			(getCpuTime(running_queue, running_queue->pid) < running_queue->proctime)){
 			running_queue->cputime+=time_delta;
 			timer+=time_delta;
+			// Add log entry here, add status parameter
 		}
 		// Note that process has finished and make a log entry
 		printf("Process with PID %d ran for %f seconds.\n", running_queue->pid, running_queue->cputime);

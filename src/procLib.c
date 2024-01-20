@@ -79,11 +79,11 @@ struct node* processExit(struct node* running_queue){
 void addLogEntry(struct node* process, int time){
 	FILE *fp = NULL;
 	if (process->pid == 0){
-		fp = fopen("../log/logfile.txt", "w");
+		fp = fopen("../log/logfile", "w");
 		fprintf(fp, "%d, %d, %d, %d, %f, %f\n", time, process->pid, 3, process->niceness, process->cputime, process->proctime);
 	}
 	else{
-		fp = fopen("../log/logfile.txt" , "a");
+		fp = fopen("../log/logfile" , "a");
 		fprintf(fp, "%d, %d, %d, %d, %f, %f\n", time, process->pid, 3, process->niceness, process->cputime, process->proctime);
 	}
 	fclose(fp);
