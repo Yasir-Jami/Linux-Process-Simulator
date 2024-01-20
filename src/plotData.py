@@ -3,7 +3,7 @@ from graphics import *
 from PIL import Image as otherImage
 import sys
 import os.path
-filename = "log"
+filename = "logfile"
 displayWidth = 500
 
 
@@ -15,7 +15,7 @@ def main():
         colours.append(generateColour(width))
     #file = open("lab02/log/") #  use for SS
     #file = open(os.path.dirname(__file__)+"\..\log")
-    file = open("log")
+    file = open(filename)
     win = GraphWin("output", 700, 300)
     buffer = 100
     i = 0
