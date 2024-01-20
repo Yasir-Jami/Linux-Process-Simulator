@@ -17,4 +17,4 @@ $(OBJECT)%.o: $(SOURCE)%.c
 .PHONY: clean
 
 clean:
-	rm -f *.o procSim ../log/logfile.txt
+	rm -f *.o procSim ../log/logfile
