@@ -10,7 +10,7 @@ struct node* admit(struct node* ready_queue)
 {
 	// File handling
 	FILE* fp;
-	int file_count; // Number of files in newProc - used to determine pid
+	int file_count = 0; // Number of files in newProc - used to determine pid
 	char file_contents[50]; // To store read file contents
 	char fileloc[50]; // Location of current file in the directory structure
         char* token; // Used for retrieving niceness and proctime from file
@@ -32,8 +32,7 @@ struct node* admit(struct node* ready_queue)
 	while ( (file = readdir(processDir)) ){
 		if ((strcmp(file->d_name, ".") == 0) || (strcmp(file->d_name, "..") == 0)){
 			continue;
-		}	
-	        
+		} 
 		// File location in the form ../newProc/(FILE)
 		strcpy(fileloc, dirname);
 	        strncat(fileloc, "/", 2);
