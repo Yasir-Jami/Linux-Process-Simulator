@@ -1,3 +1,4 @@
+#!/bin/python3
 from graphics import *
 from PIL import Image as otherImage
 import sys
