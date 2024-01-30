@@ -1,4 +1,12 @@
-void addProcesses(struct node* ready_queue)
+#include <stdio.h>
+#include <string.h>
+#include <stdlib.h>
+#include <string.h>
+#include <dirent.h>
+#include "dStruct.h"
+#include "procLib.h"
+
+struct node* admit(struct node* ready_queue)
 {
 	// File handling
 	FILE* fp;
@@ -17,15 +25,14 @@ void addProcesses(struct node* ready_queue)
 	processDir = opendir(dirname);
 	if (processDir == NULL){
 		printf("No new processes available. Closing program.\n");
-		return 1;
+		exit(EXIT_FAILURE);	
 	}
 	
 	// Read from files in the new process directory. Add processes to ready queue one by one
 	while ( (file = readdir(processDir)) ){
 		if ((strcmp(file->d_name, ".") == 0) || (strcmp(file->d_name, "..") == 0)){
 			continue;
-		}
-		file_count++; // Used for pid
+		}	
 	        
 		// File location in the form ../newProc/(FILE)
 		strcpy(fileloc, dirname);
@@ -49,9 +56,36 @@ void addProcesses(struct node* ready_queue)
                 proctime = atof(token);
 
 		// After reading from file, make a new process and add to ready queue
-		printf("Adding %s to ready queue...\n", file->d_name);
-		ready_queue = push(struct node *process, file_count, 1, niceness, initial_time, proctime);
+		printf("Adding process %s to ready queue with PID %d...\n", file->d_name, file_count);
+		ready_queue = push(ready_queue, file_count, 1, niceness, 0.0, proctime);
+		file_count++; // Used for pid
 	}
-
 	closedir(processDir);
+	return ready_queue;
+}
+
+struct node* dispatch(struct node* ready_queue, struct node* running_queue, int pid){
+	struct node* process = getEntry(ready_queue, pid);
+	running_queue = push(running_queue, pid, 2, process->niceness, process->cputime, process->proctime);
+	ready_queue = pop(process);
+	return running_queue;
+}
+
+struct node* processExit(struct node* running_queue){
+	running_queue->status = 3;
+	struct node* remove = pop(running_queue); // Need to fix pop so that it is a void func
+	return running_queue;
+}
+
+void addLogEntry(struct node* process, int time){
+	FILE *fp = NULL;
+	if (process->pid == 0){
+		fp = fopen("../log/logfile.txt", "w");
+		fprintf(fp, "%d, %d, %d, %d, %f, %f\n", time, process->pid, 3, process->niceness, process->cputime, process->proctime);
+	}
+	else{
+		fp = fopen("../log/logfile.txt" , "a");
+		fprintf(fp, "%d, %d, %d, %d, %f, %f\n", time, process->pid, 3, process->niceness, process->cputime, process->proctime);
+	}
+	fclose(fp);
 }
