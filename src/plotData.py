@@ -2,12 +2,11 @@ from graphics import *
 from PIL import Image as otherImage
 import sys
 import os.path
-filename = "log"
+filename = "../log/logfile"
 displayWidth = 500
 
-
 def main():
-    file = open("../log/log*", "r")
+    file = open(filename, "r")
     data = getData(file)
     widths = getWidths(data, displayWidth)
     colours = []
@@ -34,14 +33,14 @@ def main():
 def getWidths(data, maxWidth):
     totalTime = 0
     for dat in data:
-        totalTime += (dat[0])
+        dat[5] = str(dat[5][:-1])
+        dat[5] = float(dat[5])
+        totalTime += (dat[5])
     ratio = maxWidth / totalTime
     widths = []
     for dat in data:
-        widths.append(dat[0]*ratio)
+        widths.append(dat[5]*ratio)
     return widths
-
-
 
 def getData(file):
     procs = []
@@ -54,7 +53,11 @@ def getData(file):
     #return [[100,7610],[50,9934],[10,2876]] - test suite of numbers
 
 def generateColour(num):
+    num = num*120
     r = int(num%255)
     g = int(255 - r)
-    b = int(num**2%255)
+    b = int((num**2)%255)
     return color_rgb(r,g,b)
+
+if __name__ == '__main__':
+    main()

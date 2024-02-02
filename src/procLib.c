@@ -48,10 +48,10 @@ struct node* admit(struct node* ready_queue)
                 }
 
                 // Get niceness
-                token = strtok(file_contents, " ");
+                token = strtok(file_contents, ",");
                 niceness = atoi(token);
 		// Get proctime
-                token = strtok(NULL, " ");
+                token = strtok(NULL, ",");
                 proctime = atof(token);
 
 		// After reading from file, make a new process and add to ready queue
