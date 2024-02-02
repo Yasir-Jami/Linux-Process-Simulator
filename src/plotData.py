@@ -33,13 +33,13 @@ def main():
 def getWidths(data, maxWidth):
     totalTime = 0
     for dat in data:
-        dat[5] = str(dat[5][:-1])
-        dat[5] = float(dat[5])
-        totalTime += (dat[5])
+        dat[4] = str(dat[4][:-1])
+        dat[4] = float(dat[4])
+        totalTime += (dat[4])
     ratio = maxWidth / totalTime
     widths = []
     for dat in data:
-        widths.append(dat[5]*ratio)
+        widths.append(dat[4]*ratio)
     return widths
 
 def getData(file):
@@ -53,7 +53,7 @@ def getData(file):
     #return [[100,7610],[50,9934],[10,2876]] - test suite of numbers
 
 def generateColour(num):
-    num = num*120
+    num = num*150
     r = int(num%255)
     g = int(255 - r)
     b = int((num**2)%255)

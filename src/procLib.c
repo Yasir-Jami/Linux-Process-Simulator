@@ -72,7 +72,7 @@ struct node* dispatch(struct node* ready_queue, struct node* running_queue, int 
 
 struct node* processExit(struct node* running_queue){
 	running_queue->status = 3;
-	struct node* remove = pop(running_queue); // Need to fix pop so that it is a void func
+	struct node* remove = pop(running_queue); // Need to fix pop so that it is a void func	
 	return running_queue;
 }
 

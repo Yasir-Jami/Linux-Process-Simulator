@@ -6,8 +6,6 @@ CFLAGS:=-Wall -std=c11
 SOURCE:=./src/
 OBJECT:=../obj/
 
-# If using source path, do $(SOURCE)
-
 procSim: procSim.o procLib.o dStruct.o
 	$(CC) -o $@ $(CFLAGS) $^
 
@@ -17,4 +15,4 @@ $(OBJECT)%.o: $(SOURCE)%.c
 .PHONY: clean
 
 clean:
-	rm -f *.o procSim ../log/logfile
+	rm -f *.o procSim
