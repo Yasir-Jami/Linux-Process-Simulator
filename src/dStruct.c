@@ -18,14 +18,23 @@ struct node* push(struct node* list, int _pid, int _status, int _niceness, doubl
 	return(newNode);
 }
 
-struct node* pop(struct node* list) {
-	struct node* currentNode;
-	currentNode = list->next;
-	//if(currentNode==NULL) {
-	//	return(list);
-	//}
-	free(list);
-	return(currentNode);
+struct node* pop(struct node list) {
+	struct node* temp = list;
+	if (temp){
+		list = temp->next;
+	}
+	return(temp);
+}
+
+struct node* freeList(struct node* head){
+	struct node* temp;
+	
+	// Free all nodes iteratively
+	while (head != NULL){
+		temp = head;
+		head = head->next;
+		free(temp);
+	}
 }
 
 // Using default values

@@ -64,7 +64,14 @@ struct node* admit(struct node* ready_queue)
 }
 
 struct node* dispatch(struct node* ready_queue, struct node* running_queue, int pid){
-	struct node* process = getEntry(ready_queue, pid);
+		process = getEntry(ready_queue, pid);	
+
+
+
+		
+	else{
+		}
+	
 	running_queue = push(running_queue, pid, 2, process->niceness, process->cputime, process->proctime);
 	ready_queue = pop(process);
 	return running_queue;
@@ -76,6 +83,7 @@ struct node* processExit(struct node* running_queue){
 	return running_queue;
 }
 
+// Change log entry
 void addLogEntry(struct node* process, int time){
 	FILE *fp = NULL;
 	if (process->pid == 0){
