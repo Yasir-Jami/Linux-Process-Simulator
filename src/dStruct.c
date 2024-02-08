@@ -3,7 +3,7 @@
 #include <stdbool.h>
 #include "dStruct.h"
 
-struct node* push(struct node* list, int _pid, int _status, int _niceness, double _cputime, double _proctime) {
+struct node* push(struct node* head, int _pid, int _status, int _niceness, double _cputime, double _proctime) {
 	struct node* newNode;
 	if ((newNode = malloc(1*sizeof(struct node)))==NULL) {
 		exit(EXIT_FAILURE);
@@ -14,14 +14,14 @@ struct node* push(struct node* list, int _pid, int _status, int _niceness, doubl
 	newNode->cputime = _cputime;
 	newNode->proctime = _proctime;
 
-	newNode->next=list;
+	newNode->next=head;
 	return(newNode);
 }
 
-struct node* pop(struct node list) {
-	struct node* temp = list;
+struct node* pop(struct node* head) {
+	struct node* temp = head;
 	if (temp){
-		list = temp->next;
+		head = temp->next;
 	}
 	return(temp);
 }
