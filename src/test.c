@@ -6,15 +6,14 @@ int main(void){
 	queue1 = initializeList();
 	
 	printEntries(queue1);
-
-	queue1 = pop(queue1);
+	
 	struct node* remove = pop(queue1);
-	struct node* remove2 = pop(queue1);
-	printf("After pop\n");
+	//struct node* remove2 = pop(queue1);
+	printf("**********AFTER POP**********\n");
 	printEntries(queue1);
 
 	freeList(queue1);
-	freeList(remove);
+	//freeList(remove);
 
 	return 0;
 }

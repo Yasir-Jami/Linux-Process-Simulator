@@ -21,12 +21,12 @@ struct node* push(struct node* head, int _pid, int _status, int _niceness, doubl
 struct node* pop(struct node* head) {
 	struct node* temp = head;
 	if (temp){
-		head = temp->next;
+		*head = *temp->next;
 	}
 	return(temp);
 }
 
-struct node* freeList(struct node* head){
+void freeList(struct node* head){
 	struct node* temp;
 	
 	// Free all nodes iteratively
