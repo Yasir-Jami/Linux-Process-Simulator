@@ -18,7 +18,7 @@ struct node* initializeList();
 /* Data Structure (linked list) Operations */
 struct node* push(struct node*, int, int, int, double, double);
 
-struct node* pop(struct node);
+struct node* pop(struct node*);
 
 struct node* freeList(struct node* head);
 
