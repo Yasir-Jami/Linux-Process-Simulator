@@ -19,10 +19,8 @@ struct node* push(struct node* head, int _pid, int _status, int _niceness, doubl
 }
 
 struct node* pop(struct node* head) {
-	struct node* temp = head;
-	if (temp){
-		*head = *temp->next;
-	}
+	struct node* temp = *head;
+	*head = *temp->next;
 	return(temp);
 }
 
