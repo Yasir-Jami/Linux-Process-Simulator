@@ -7,13 +7,14 @@ int main(void){
 	
 	printEntries(queue1);
 
+	queue1 = pop(queue1);
 	struct node* remove = pop(queue1);
 	struct node* remove2 = pop(queue1);
 	printf("After pop\n");
 	printEntries(queue1);
 
 	freeList(queue1);
-	//freeList(remove);
+	freeList(remove);
 
 	return 0;
 }

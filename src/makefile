@@ -6,7 +6,10 @@ CFLAGS:=-Wall -std=c11
 SOURCE:=./src/
 OBJECT:=../obj/
 
-procSim: procSim.o procLib.o dStruct.o
+#procSim: procSim.o procLib.o dStruct.o
+#	$(CC) -o $@ $(CFLAGS) $^
+
+app: test.o dStruct.o
 	$(CC) -o $@ $(CFLAGS) $^
 
 $(OBJECT)%.o: $(SOURCE)%.c
