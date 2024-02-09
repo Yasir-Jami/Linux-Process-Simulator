@@ -19,7 +19,7 @@ int main(void){
 	double time_qt = TIME_JIFFY; // Max allowed time for a process to run before swapping - equal to proctime for SJF and FIFO
 	char algorithm[24] = ALGOR;
 	int pid = 0; // Used to determine which processes are added to running queue
-	double lowest_time = 500.0; // Used for SJF to determine lowest proctime
+	double lowest_time = 500.0; // Used in SJF to determine process with lowest proctime
 
 	// Add all processes in the newProc directory to the ready queue
 	ready_queue = admit(ready_queue);
@@ -39,20 +39,25 @@ int main(void){
 				}
 				temp = temp->next;
 			}	
-			process = getEntry(ready_queue, pid);
+			temp = getEntry(temp, pid);
+			struct node* process = pop(ready_queue);
 		}
 	
 		printf("Dispatching process with PID %d to running queue...\n", pid);
 		running_queue = dispatch(ready_queue, running_queue, pid); // Add in order of pid (start at pid 0)
-		
-			
 		timer+=time_delta;
-		
+	
+
+		// If ALGOR_RR, use an if statement that takes to a new loop or alter current loop to apply if statements with jiffies
+
 		// Process Simulator - stop when cputime meets or exceeds proctime
-		while ((getCpuTime(running_queue, running_queue->pid) != running_queue->proctime) || 
+		while ((getCpuTime(running_queue, running_queue->pid) != running_queue->proctime) ||
 			(getCpuTime(running_queue, running_queue->pid) < running_queue->proctime)){
+			
 			running_queue->cputime+=time_delta;
 			timer+=time_delta;
+			
+			
 			// Add log entry here, add status parameter
 		}
 		// Note that process has finished and make a log entry

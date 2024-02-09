@@ -18,10 +18,50 @@ struct node* push(struct node* head, int _pid, int _status, int _niceness, doubl
 	return(newNode);
 }
 
+bool isEmpty(struct node* list){
+	if (list == NULL){
+		printf("List is empty!\n");
+		return true;
+	}
+	return false;
+}
+
 struct node* pop(struct node* head) {
-	struct node* temp = *head;
-	*head = *temp->next;
+	if (head == NULL){
+		exit(EXIT_FAILURE);
+	}
+	struct node* temp = head; // 6
+	head = head->next; // 5
+	// Create dummy node potentially?
+	temp->next = NULL;
+
 	return(temp);
+}
+// 6 -> 5 -> 4 -> 3 -> 2 -> 1
+// temp points to 6 (previous node)
+// 5 -> 4 -> 3 -> 2 -> 1
+
+struct node* popAtPID(struct node* head, int pid){
+	if (isEmpty(head) == true){
+		return head;
+	}
+	if (head->pid == pid){
+		return pop(head);
+	}
+
+	struct node* temp = head;
+	struct node* prev = temp;
+
+	while (temp != NULL){
+		if (temp->pid == pid){
+			prev->next = temp->next; // Change prev's connection to the one after temp
+			temp->next = NULL;
+			return temp;
+		}
+		prev = temp;
+		temp = temp->next;
+	}
+	return temp;
 }
 
 void freeList(struct node* head){
@@ -46,14 +86,6 @@ struct node* initializeList(){
 	list = push(list, 6, 4, 0, 7.2, 2.482902);
 
 	return list;
-}
-
-bool isEmpty(struct node* list){
-	if (list == NULL){
-		printf("List is empty!\n");
-		return true;
-	}
-	return false;
 }
 
 int getSize(struct node* list){

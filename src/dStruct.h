@@ -20,6 +20,8 @@ struct node* push(struct node*, int, int, int, double, double);
 
 struct node* pop(struct node*);
 
+struct node* popAtPID(struct node* head, int pid);
+
 void freeList(struct node* head);
 
 int getSize(struct node*);
