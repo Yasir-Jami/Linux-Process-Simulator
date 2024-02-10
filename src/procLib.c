@@ -56,28 +56,30 @@ struct node* admit(struct node* ready_queue)
                 proctime = atof(token);
 
 		// After reading from file, make a new process and add to ready queue
-		printf("Adding process %s to ready queue with PID %d...\n", file->d_name, file_count);
+		printf("Adding process %s to ready queue %d with PID %d...\n", file->d_name, niceness, file_count);
 		ready_queue = push(ready_queue, file_count, 1, niceness, 0.0, proctime);
-		file_count++; // Used for pid
+		file_count++;
 	}
 	closedir(processDir);
 	return ready_queue;
 }
 
+// Look into popping from the ready_queue directly - maybe *ready_queue = pop(process)?
 struct node* dispatch(struct node* ready_queue, struct node* running_queue, int pid){
-	process = getEntry(*ready_queue, pid);
-	*running_queue = push(running_queue, pid, 2, process->niceness, process->cputime, process->proctime);
-	*ready_queue = pop(process);
+	//process = getEntry(ready_queue, pid);
+	//running_queue = push(running_queue, pid, 2, process->niceness, process->cputime, process->proctime);
+	struct node* process = popAtPID(ready_queue, pid); // Pop from ready queue at the given pid;	
+	ready_queue = pop(process);	
 	return running_queue;
 }
 
-// Change log entry
 void addLogEntry(struct node* process, int current_time, int status){
 	FILE *fp = NULL;
 	char* fname = "../log/logfile";
 	char* algorithm = ALGOR;
+	*algorithm += 6;
 	strncat(fname, '-', 2);
-	strncat(fname, algorithm, 16); // logfile-ALGOR_RR
+	strncat(fname, algorithm, 16); // logfile-RR
 	
 	// Check if file exists, if it does not create it, otherwise append
 	if ((access(fname, F_OK)) == 0){
@@ -106,8 +108,14 @@ struct node* popNode(struct node* queue, char* algorithm_used){
 	}
 	// FIFO - Pop the first process added
 	else if (strcmp(algorithm, "ALGOR_FIFO")){struct node* process = popAtEnd(ready_queue);}
-	// RR - Pop normally
+	// RR and MLFQ - Pop normally
 	else{struct node* process = pop(ready_queue);}
 
 	return process;
+}
+
+void pushToNextQueue(struct node* higher_queue, struct node* lower_queue){
+	higher_queue
+	
+	
 }

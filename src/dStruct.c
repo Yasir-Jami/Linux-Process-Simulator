@@ -18,16 +18,22 @@ struct node* push(struct node* head, int _pid, int _status, int _niceness, doubl
 	return(newNode);
 }
 
-struct node* pushToEnd(struct node* head, struct node* new_end_node){
-	struct node* temp = head;	
-	while (temp != NULL){		
-		temp = temp->next;
+// Would be better if I could pass the memory address of new node to the end of the target queue
+struct node* pushToEnd(struct node* head, struct node* new_node){
+	if (head == NULL){
+		head = pop(new_node);
+		return head;
 	}
 
-	temp->next = pop(new_end_node);
-	return new_end_node;
-}
+	struct node* temp = head;	
+	while (temp->next != NULL){
+		temp = temp->next;
+	}
+	temp->next = new_node;
+	new_node->next = NULL;
 
+	return head;
+}
 
 bool isEmpty(struct node* list){
 	if (list == NULL){
@@ -43,7 +49,7 @@ struct node* pop(struct node* head) {
 		exit(EXIT_FAILURE);
 	}
 	// Copy head node into temp
-	// May cause leak, check valgrind
+	// May cause leak, use valgrind
 	struct node* temp = push(head, head->pid, head->status, head->niceness, head->cputime, head->proctime);	
 	*head = *head->next; // Change head node to next node
 	temp->next = NULL; // Break off link to list

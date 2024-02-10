@@ -22,14 +22,17 @@ struct node* processExit(struct node* running_queue);
 */
 void addLogEntry(struct node* process, int time);
 
+void pushToNextQueue(struct node* higher_queue, struct node* lower_queue);
+
 #endif
 
 #define ALGOR ALGOR_SJF
 #define TIME_DT 0.1 // Increment timer by this amount each cycle
+#define TIME_RESET 10
 
 // Round Robin Scheduling (preemptive)
-#if ALGOR == ALGOR_ROUND_ROBIN	
-	#define TIME_JIFFY 3.0
+#if ALGOR == ALGOR_R_R || ALGOR_MLFQ
+	#define TIME_JIFFY 1.0
 // FIFO and SJF Scheduling (both are non-preemptive for this lab)
 #else
 	#define TIME_JIFFY 0.0
