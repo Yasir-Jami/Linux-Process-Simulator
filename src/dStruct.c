@@ -5,7 +5,7 @@
 
 struct node* push(struct node* head, int _pid, int _status, int _niceness, double _cputime, double _proctime) {
 	struct node* newNode;
-	if ((newNode = malloc(1*sizeof(struct node)))==NULL) {
+	if ((newNode = malloc(sizeof(struct node)))==NULL) {
 		exit(EXIT_FAILURE);
 	}
 	newNode->pid= _pid;
@@ -17,6 +17,17 @@ struct node* push(struct node* head, int _pid, int _status, int _niceness, doubl
 	newNode->next=head;
 	return(newNode);
 }
+
+struct node* pushToEnd(struct node* head, struct node* new_end_node){
+	struct node* temp = head;	
+	while (temp != NULL){		
+		temp = temp->next;
+	}
+
+	temp->next = pop(new_end_node);
+	return new_end_node;
+}
+
 
 bool isEmpty(struct node* list){
 	if (list == NULL){
@@ -32,6 +43,7 @@ struct node* pop(struct node* head) {
 		exit(EXIT_FAILURE);
 	}
 	// Copy head node into temp
+	// May cause leak, check valgrind
 	struct node* temp = push(head, head->pid, head->status, head->niceness, head->cputime, head->proctime);	
 	*head = *head->next; // Change head node to next node
 	temp->next = NULL; // Break off link to list
@@ -100,7 +112,7 @@ void freeList(struct node* head){
 }
 
 // Using default values - for testing dStruct behavior
-struct node* initializeList(){
+struct node* initializeList(){	
 	struct node* list = NULL;
 	list = push(list, 1, 3, 2, 1.2, 10.903);
 	list = push(list, 2, 2, 4, 2.1, 32.490);
@@ -108,7 +120,6 @@ struct node* initializeList(){
 	list = push(list, 4, 1, 4, 4.5, 1.3849);
 	list = push(list, 5, 1, 8, 2.3, 449.2492);
 	list = push(list, 6, 4, 0, 7.2, 2.482902);
-
 	return list;
 }
 

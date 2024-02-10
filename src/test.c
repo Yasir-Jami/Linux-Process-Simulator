@@ -2,8 +2,7 @@
 #include "dStruct.h"
 
 int main(void){
-	struct node* queue1 = NULL;
-	queue1 = initializeList();
+	struct node* queue1 = initializeList();
 /*	
 	printf("Current q1 size: %d\n", getSize(queue1));
 	printEntries(queue1);
@@ -48,6 +47,17 @@ int main(void){
 
 	printf("Size of queue1: %d\n", getSize(queue1));
 	printf("Size of queue3: %d\n", getSize(queue3));
+
+	queue3 = pushToEnd(queue1, queue3);
+
+	printf("Queue 1 after push to end: \n");
+	printEntries(queue1);
+
+	printf("Queue 3 after push to end: \n");
+	printEntries(queue3);
+
+//	freeList(queue1);
+//	freeList(queue3);
 
 	return 0;
 }

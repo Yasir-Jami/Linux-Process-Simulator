@@ -3,6 +3,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <dirent.h>
+#include <unistd.h>
 #include "dStruct.h"
 #include "procLib.h"
 
@@ -64,30 +65,49 @@ struct node* admit(struct node* ready_queue)
 }
 
 struct node* dispatch(struct node* ready_queue, struct node* running_queue, int pid){
-	process = getEntry(ready_queue, pid);	
-
-
-	running_queue = push(running_queue, pid, 2, process->niceness, process->cputime, process->proctime);
-	ready_queue = pop(process);
-	return running_queue;
-}
-
-struct node* processExit(struct node* running_queue){
-	running_queue->status = 3;
-	struct node* remove = pop(running_queue); // Need to fix pop so that it is a void func	
+	process = getEntry(*ready_queue, pid);
+	*running_queue = push(running_queue, pid, 2, process->niceness, process->cputime, process->proctime);
+	*ready_queue = pop(process);
 	return running_queue;
 }
 
 // Change log entry
-void addLogEntry(struct node* process, int time){
+void addLogEntry(struct node* process, int current_time, int status){
 	FILE *fp = NULL;
-	if (process->pid == 0){
-		fp = fopen("../log/logfile", "w");
-		fprintf(fp, "%d, %d, %d, %d, %f, %f\n", time, process->pid, 3, process->niceness, process->cputime, process->proctime);
+	char* fname = "../log/logfile";
+	char* algorithm = ALGOR;
+	strncat(fname, '-', 2);
+	strncat(fname, algorithm, 16); // logfile-ALGOR_RR
+	
+	// Check if file exists, if it does not create it, otherwise append
+	if ((access(fname, F_OK)) == 0){
+		fp = fopen(fname, "a");
+		fprintf(fp, "%d, %d, %d, %d, %f, %f\n", current_time, process->pid, status, process->niceness, process->cputime, process->proctime);
 	}
 	else{
-		fp = fopen("../log/logfile" , "a");
-		fprintf(fp, "%d, %d, %d, %d, %f, %f\n", time, process->pid, 3, process->niceness, process->cputime, process->proctime);
+		fp = fopen(fname , "w");
+		fprintf(fp, "%d, %d, %d, %d, %f, %f\n", current_time, process->pid, status, process->niceness, process->cputime, process->proctime);
 	}
 	fclose(fp);
+}
+
+// Pop according to the scheduling algorithm used
+struct node* popNode(struct node* queue, char* algorithm_used){
+	// SJF - Get PID of the process with the lowest proctime
+	if (strcmp(algorithm, "ALGOR_SJF") == 0){
+		struct node* temp = ready_queue;
+		while (temp != NULL){
+			if (temp->proctime < lowest_time){
+				pid = temp->pid;
+			}
+			temp = temp->next;
+		}
+		struct node* process = popAtPid(ready_queue, pid);
+	}
+	// FIFO - Pop the first process added
+	else if (strcmp(algorithm, "ALGOR_FIFO")){struct node* process = popAtEnd(ready_queue);}
+	// RR - Pop normally
+	else{struct node* process = pop(ready_queue);}
+
+	return process;
 }
