@@ -26,15 +26,15 @@ bool isEmpty(struct node* list){
 	return false;
 }
 
+// Test multiple pops with valgrind - could be leaking memory
 struct node* pop(struct node* head) {
 	if (head == NULL){
 		exit(EXIT_FAILURE);
 	}
-	struct node* temp = head; // 6
-	head = head->next; // 5
-	// Create dummy node potentially?
-	temp->next = NULL;
-
+	// Copy head node into temp
+	struct node* temp = push(head, head->pid, head->status, head->niceness, head->cputime, head->proctime);	
+	*head = *head->next; // Change head node to next node
+	temp->next = NULL; // Break off link to list
 	return(temp);
 }
 // 6 -> 5 -> 4 -> 3 -> 2 -> 1
@@ -64,6 +64,30 @@ struct node* popAtPID(struct node* head, int pid){
 	return temp;
 }
 
+// Will be O(n) every time - similar to popAtPid, but only pops at end
+struct node* popAtEnd(struct node* head){
+	if (isEmpty(head) == true){
+		return head;
+	}
+	if (head->next == NULL){
+		return head;
+	}
+
+	struct node* temp = head;
+	struct node* prev = temp;
+
+	while (temp != NULL){
+		prev = temp;
+		temp = temp->next;
+		if (temp->next == NULL){
+			prev->next = temp->next;
+			temp->next = NULL;
+			return temp;
+		}
+	}
+	return head;
+}
+
 void freeList(struct node* head){
 	struct node* temp;
 	
@@ -75,9 +99,9 @@ void freeList(struct node* head){
 	}
 }
 
-// Using default values
+// Using default values - for testing dStruct behavior
 struct node* initializeList(){
-	struct node* list = NULL; // NULL: void*
+	struct node* list = NULL;
 	list = push(list, 1, 3, 2, 1.2, 10.903);
 	list = push(list, 2, 2, 4, 2.1, 32.490);
 	list = push(list, 3, 0, 7, 0.03, 3.2930);
