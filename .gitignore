@@ -4,3 +4,4 @@ a.out
 *.o
 procSim
 logfile*
+app

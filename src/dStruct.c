@@ -3,7 +3,7 @@
 #include <stdbool.h>
 #include "dStruct.h"
 
-struct node* push(struct node* list, int _pid, int _status, int _niceness, double _cputime, double _proctime) {
+struct node* push(struct node* head, int _pid, int _status, int _niceness, double _cputime, double _proctime) {
 	struct node* newNode;
 	if ((newNode = malloc(1*sizeof(struct node)))==NULL) {
 		exit(EXIT_FAILURE);
@@ -14,31 +14,8 @@ struct node* push(struct node* list, int _pid, int _status, int _niceness, doubl
 	newNode->cputime = _cputime;
 	newNode->proctime = _proctime;
 
-	newNode->next=list;
+	newNode->next=head;
 	return(newNode);
-}
-
-struct node* pop(struct node* list) {
-	struct node* currentNode;
-	currentNode = list->next;
-	//if(currentNode==NULL) {
-	//	return(list);
-	//}
-	free(list);
-	return(currentNode);
-}
-
-// Using default values
-struct node* initializeList(){
-	struct node* list = NULL; // NULL: void*
-	list = push(list, 1, 3, 2, 1.2, 10.903);
-	list = push(list, 2, 2, 4, 2.1, 32.490);
-	list = push(list, 3, 0, 7, 0.03, 3.2930);
-	list = push(list, 4, 1, 4, 4.5, 1.3849);
-	list = push(list, 5, 1, 8, 2.3, 449.2492);
-	list = push(list, 6, 4, 0, 7.2, 2.482902);
-
-	return list;
 }
 
 bool isEmpty(struct node* list){
@@ -47,6 +24,92 @@ bool isEmpty(struct node* list){
 		return true;
 	}
 	return false;
+}
+
+// Test multiple pops with valgrind - could be leaking memory
+struct node* pop(struct node* head) {
+	if (head == NULL){
+		exit(EXIT_FAILURE);
+	}
+	// Copy head node into temp
+	struct node* temp = push(head, head->pid, head->status, head->niceness, head->cputime, head->proctime);	
+	*head = *head->next; // Change head node to next node
+	temp->next = NULL; // Break off link to list
+	return(temp);
+}
+// 6 -> 5 -> 4 -> 3 -> 2 -> 1
+// temp points to 6 (previous node)
+// 5 -> 4 -> 3 -> 2 -> 1
+
+struct node* popAtPID(struct node* head, int pid){
+	if (isEmpty(head) == true){
+		return head;
+	}
+	if (head->pid == pid){
+		return pop(head);
+	}
+
+	struct node* temp = head;
+	struct node* prev = temp;
+
+	while (temp != NULL){
+		if (temp->pid == pid){
+			prev->next = temp->next; // Change prev's connection to the one after temp
+			temp->next = NULL;
+			return temp;
+		}
+		prev = temp;
+		temp = temp->next;
+	}
+	return temp;
+}
+
+// Will be O(n) every time - similar to popAtPid, but only pops at end
+struct node* popAtEnd(struct node* head){
+	if (isEmpty(head) == true){
+		return head;
+	}
+	if (head->next == NULL){
+		return head;
+	}
+
+	struct node* temp = head;
+	struct node* prev = temp;
+
+	while (temp != NULL){
+		prev = temp;
+		temp = temp->next;
+		if (temp->next == NULL){
+			prev->next = temp->next;
+			temp->next = NULL;
+			return temp;
+		}
+	}
+	return head;
+}
+
+void freeList(struct node* head){
+	struct node* temp;
+	
+	// Free all nodes iteratively
+	while (head != NULL){
+		temp = head;
+		head = head->next;
+		free(temp);
+	}
+}
+
+// Using default values - for testing dStruct behavior
+struct node* initializeList(){
+	struct node* list = NULL;
+	list = push(list, 1, 3, 2, 1.2, 10.903);
+	list = push(list, 2, 2, 4, 2.1, 32.490);
+	list = push(list, 3, 0, 7, 0.03, 3.2930);
+	list = push(list, 4, 1, 4, 4.5, 1.3849);
+	list = push(list, 5, 1, 8, 2.3, 449.2492);
+	list = push(list, 6, 4, 0, 7.2, 2.482902);
+
+	return list;
 }
 
 int getSize(struct node* list){
