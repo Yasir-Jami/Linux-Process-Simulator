@@ -81,7 +81,7 @@ void addLogEntry(struct node* process, int current_time, int status){
 	char date[]  = __DATE__;
 	int i = 0;
 
-	while (date[i] != 0){
+	while (date[i] != '\0'){
 		if (date[i] == ' '){
 			date[i] = '-';
 		}
