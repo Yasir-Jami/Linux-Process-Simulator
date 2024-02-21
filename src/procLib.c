@@ -64,22 +64,34 @@ struct node* admit(struct node* ready_queue)
 	return ready_queue;
 }
 
-// Look into popping from the ready_queue directly - maybe *ready_queue = pop(process)?
-struct node* dispatch(struct node* ready_queue, struct node* running_queue, int pid){
-	//process = getEntry(ready_queue, pid);
-	//running_queue = push(running_queue, pid, 2, process->niceness, process->cputime, process->proctime);
-	struct node* process = popAtPID(ready_queue, pid); // Pop from ready queue at the given pid;	
-	ready_queue = pop(process);	
+struct node* dispatch(struct node** ready_queue, struct node** running_queue, int pid){
+	struct node* process = popAtPID(ready_queue, pid); // Pop from ready queue at the given pid
+	running_queue = push(running_queue, pid, 2, process->niceness, process->cputime, process->proctime);
 	return running_queue;
 }
 
+/*
+ * Change to get all information from ready queue and add to the file
+ */
 void addLogEntry(struct node* process, int current_time, int status){
 	FILE *fp = NULL;
-	char* fname = "../log/logfile";
-	char* algorithm = ALGOR;
-	*algorithm += 6;
-	strncat(fname, '-', 2);
-	strncat(fname, algorithm, 16); // logfile-RR
+	// fname and algor were char* before, change if it does not work anymore
+	char fname[] = "../log/logfile";
+	char algorithm[] = "ALGOR_RR";
+	char date[]  = __DATE__;
+	int i = 0;
+
+	while (date[i] != 0){
+		if (date[i] == ' '){
+			date[i] = '-';
+		}
+		i++;
+	}
+	
+	strncat(fname, "-", 2);
+	strncat(fname, date, 16);
+	strncat(fname, "-", 2);
+	strncat(fname, algorithm, 12);
 	
 	// Check if file exists, if it does not create it, otherwise append
 	if ((access(fname, F_OK)) == 0){
@@ -94,7 +106,7 @@ void addLogEntry(struct node* process, int current_time, int status){
 }
 
 // Pop according to the scheduling algorithm used
-struct node* popNode(struct node* queue, char* algorithm_used){
+struct node* popFromReadyQueue(struct node** ready_queue, char* algorithm_used){
 	// SJF - Get PID of the process with the lowest proctime
 	if (strcmp(algorithm, "ALGOR_SJF") == 0){
 		struct node* temp = ready_queue;
@@ -112,10 +124,4 @@ struct node* popNode(struct node* queue, char* algorithm_used){
 	else{struct node* process = pop(ready_queue);}
 
 	return process;
-}
-
-void pushToNextQueue(struct node* higher_queue, struct node* lower_queue){
-	higher_queue
-	
-	
 }

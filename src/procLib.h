@@ -28,10 +28,9 @@ void pushToNextQueue(struct node* higher_queue, struct node* lower_queue);
 
 #define ALGOR ALGOR_SJF
 #define TIME_DT 0.1 // Increment timer by this amount each cycle
-#define TIME_RESET 10
 
 // Round Robin Scheduling (preemptive)
-#if ALGOR == ALGOR_R_R || ALGOR_MLFQ
+#if ALGOR == ALGOR_R_R
 	#define TIME_JIFFY 1.0
 // FIFO and SJF Scheduling (both are non-preemptive for this lab)
 #else
