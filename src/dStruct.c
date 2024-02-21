@@ -18,46 +18,62 @@ struct node* push(struct node* head, int _pid, int _status, int _niceness, doubl
 	return(newNode);
 }
 
-// Would be better if I could pass the memory address of new node to the end of the target queue
-struct node* pushToEnd(struct node* head, struct node* new_node){
+struct node* append(struct node* head, struct node* nodeToPush){
 	if (head == NULL){
-		head = pop(new_node);
+		head = pop(nodeToPush);
 		return head;
 	}
 
-	struct node* temp = head;	
+	// Create a new node based on nodeToPush's attributes
+	struct node* end_node = NULL;
+	if ((end_node = malloc(sizeof(struct node)))==NULL){
+		exit(EXIT_FAILURE);
+	}
+	
+	end_node->pid = nodeToPush->pid;
+	end_node->status = nodeToPush->status;
+	end_node->niceness = nodeToPush->niceness;
+	end_node->cputime = nodeToPush->cputime;
+	end_node->proctime = nodeToPush->proctime;
+
+	struct node* temp = head;
 	while (temp->next != NULL){
 		temp = temp->next;
 	}
-	temp->next = new_node;
-	new_node->next = NULL;
+	temp->next = end_node;
+	end_node->next = NULL;
 
 	return head;
 }
 
 bool isEmpty(struct node* list){
-	if (list == NULL){
+	if ((list == NULL) || (list->pid == -1)){
 		printf("List is empty!\n");
 		return true;
 	}
 	return false;
 }
 
-// Test multiple pops with valgrind - could be leaking memory
-struct node* pop(struct node* head) {
+// Test multiple pops with valgrind - could be leaking
+struct node* pop(struct node* head){
 	if (head == NULL){
-		exit(EXIT_FAILURE);
+		return head;
 	}
+
+	struct node* temp = NULL;
+	temp = push(temp, head->pid, head->status, head->niceness, head->cputime, head->proctime);
+	if (head->next == NULL){
+		(*head).pid = -1;	
+		//free(head);	
+		return temp;
+	}
+	
 	// Copy head node into temp
 	// May cause leak, use valgrind
-	struct node* temp = push(head, head->pid, head->status, head->niceness, head->cputime, head->proctime);	
 	*head = *head->next; // Change head node to next node
 	temp->next = NULL; // Break off link to list
 	return(temp);
 }
-// 6 -> 5 -> 4 -> 3 -> 2 -> 1
-// temp points to 6 (previous node)
-// 5 -> 4 -> 3 -> 2 -> 1
 
 struct node* popAtPID(struct node* head, int pid){
 	if (isEmpty(head) == true){
@@ -90,7 +106,7 @@ struct node* popAtEnd(struct node* head){
 	if (head->next == NULL){
 		return head;
 	}
-
+	
 	struct node* temp = head;
 	struct node* prev = temp;
 

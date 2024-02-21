@@ -39,26 +39,29 @@ int main(void){
 */
 	struct node* queue3 = pop(queue1);
 	//queue3 = popAtEnd(queue1);
-	printf("Queue1 after pop:\n");	
-	printEntries(queue1);
+	//printf("Queue1 after pop:\n");	
+	//printEntries(queue1);
 
-	printf("Queue3 after pop:\n");	
+	printf("Queue3 after popping queue 1:\n");
 	printEntries(queue3);
 
 	printf("Size of queue1: %d\n", getSize(queue1));
 	printf("Size of queue3: %d\n", getSize(queue3));
 
-	queue1 = pushToEnd(queue1, queue3);
-	queue3 = NULL;
+	//queue1 = append(queue1, queue3);
+	struct node* queue4 = pop(queue3);
+	//queue4 = pop(queue3);
+	//queue3 = NULL;
 
 	printf("Queue 1 after push to end: \n");
-	printEntries(queue1);	
+	printEntries(queue1);
 
 	printf("Queue 3 after push to end: \n");
 	printEntries(queue3);
 
 	freeList(queue1);
 	freeList(queue3);
+	freeList(queue4);
 
 	return 0;
 }
