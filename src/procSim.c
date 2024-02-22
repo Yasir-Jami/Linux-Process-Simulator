@@ -11,16 +11,15 @@
 // 3: Complete
 
 int main(void){
-	// Queues
-	// 5 Queues for Multi-level Feedback Queue - Depends on niceness
-	struct node* ready_queue = NULL; // Acts as the niceness 5 queue for MLFQ
-	struct node* running_queue = NULL; // Queue for processes that are running
-	struct node* temp = NULL; // Used to temporarily hold nodes when removing from running queue
-	struct node* process = NULL; // Used to pass processes
+	// Queues	
+	struct node* ready_queue = NULL; // Holds processes ready to run 
+	struct node* running_queue = NULL; // Holds processes that are running
+	struct node* temp = NULL; // Used to temporarily hold processes when removing from running queue
+	struct node* process = NULL; // Used to pass processes to running queue 
 	// Timing
 	double timer = 0.0; // Global timer	
 	double time_dt = TIME_DT; // Time increment
-	double time_qt = TIME_JIFFY; // Max allowed time for a process to run before swapping - equal to proctime for SJF and FIFO
+	double time_qt = TIME_JIFFY; // Max allowed time for a process to run before swapping - essentially equal to proctime for SJF and FIFO
 	double time_reset = TIME_RESET; // Time at which the MLFQ resets, and all queues are switched to priorities
 	char algorithm[24] = ALGOR; // Scheduling Algorithm
 	int pid = 0; // Used to determine which processes are added to running queue
@@ -28,14 +27,13 @@ int main(void){
 
 	printf("Using %s\n", algorithm);
 
-	// First add all processes to ready queue
+	// Add all processes to ready queue
 	ready_queue = admit(ready_queue);
-	// Push to queue according to its niceness - any process with a niceness not within 1-4 remains in ready_queue
 	printf("\n");
 
 	// Add processes to running queue while all queues are not equal to null
 	while (ready_queue){
-		// Add process according to algorithm used, remove process from ready queue
+		// Add process to running queue according to algorithm used, remove process from ready queue
 		process = popFromReadyQueue(&ready_queue, algorithm);
 		
 		printf("Dispatching process with PID %d to running queue...\n", process->pid);

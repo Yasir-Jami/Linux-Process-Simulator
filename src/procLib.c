@@ -75,33 +75,39 @@ struct node* dispatch(struct node** ready_queue, struct node** running_queue, in
  */
 void addLogEntry(struct node* process, int current_time, int status){
 	FILE *fp = NULL;
-	// fname and algor were char* before, change if it does not work anymore
-	char fname[] = "../log/logfile";
-	char algorithm[] = "ALGOR_RR";
-	char date[]  = __DATE__;
+	char fname[50] = "";
+	char pathname[] = "../log/logfile";
+	char date[16]  = __DATE__;
+	char algorithm[12] = ALGOR;
 	int i = 0;
 
-	while (date[i] != '\0'){
+	while (date[i] != '\0'){		
 		if (date[i] == ' '){
 			date[i] = '-';
 		}
 		i++;
-	}
+	}	
+	sprintf(fname, "%s-%s-%s", pathname, date, algorithm); // Form full logfile name
 	
-	strncat(fname, "-", 2);
-	strncat(fname, date, 16);
-	strncat(fname, "-", 2);
-	strncat(fname, algorithm, 12);
+	// Append log entry to logfile
+	fp = fopen(fname, "a");
+/*	
+	// Add a loop to print the current status of all processes from ready and running queue
+	// Ready Queue
+	while (ready_queue != NULL){
+		fprintf(fp, "%d, %d, %d, %d, %f, %f\n", current_time, ready_queue->pid, ready_queue->status, 
+				ready_queue->niceness, ready_queue->cputime, ready_queue->proctime);
+		ready_queue = ready_queue->next;
+	}
+	// Running Queue - loop used in case we have multiple processes later 
+	while (running_queue != NULL){
+	fprintf(fp, "%d, %d, %d, %d, %f, %f\n", current_time, running_queue->pid, running_queue->status, 
+			running_queue->niceness, running_queue->cputime, running_queue->proctime);
+			running_queue = running_queue->next;
+	}
+*/
+	fprintf(fp, "%d, %d, %d, %d, %f, %f\n", current_time, process->pid, status, process->niceness, process->cputime, process->proctime);
 	
-	// Check if file exists, if it does not create it, otherwise append
-	if ((access(fname, F_OK)) == 0){
-		fp = fopen(fname, "a");
-		fprintf(fp, "%d, %d, %d, %d, %f, %f\n", current_time, process->pid, status, process->niceness, process->cputime, process->proctime);
-	}
-	else{
-		fp = fopen(fname , "w");
-		fprintf(fp, "%d, %d, %d, %d, %f, %f\n", current_time, process->pid, status, process->niceness, process->cputime, process->proctime);
-	}
 	fclose(fp);
 }
 
