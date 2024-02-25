@@ -7,22 +7,26 @@
 struct node* admit(struct node* ready_queue);
 
 /*
-* Add process to running queue, process will be running and accumulating cputime. Upon cputime meeting/exceeding proctime, removes process from queue.
-*/
+ * Add process to running queue, process will be running and accumulating cputime. Upon cputime meeting/exceeding proctime, removes process from queue.
+ */
 
 struct node* dispatch(struct node* ready_queue, struct node* running_queue, int pid);
 
 /*
-* Pop the currently process from running queue upon meeting or exceeding cputime.
-*/
+ * Pop the currently process from running queue upon meeting or exceeding cputime.
+ */
 struct node* processExit(struct node* running_queue);
 
 /*
- * Appends status of process as a new log entry to a file located in the log directory 
-*/
-void addLogEntry(struct node* process, int time);
+ * Appends current status of process as a new log entry to a file located in the log directory 
+ */
 
-void pushToNextQueue(struct node* higher_queue, struct node* lower_queue);
+void addLogEntry(struct node* ready_queue, struct node* running_queue, int time);
+
+/*
+ *  Round Robin - rotate process out of running queue and back into ready
+ */
+void rotate(struct node** ready_queue, struct node** running_queue);
 
 #endif
 
@@ -30,7 +34,7 @@ void pushToNextQueue(struct node* higher_queue, struct node* lower_queue);
 #define TIME_DT 0.1 // Increment timer by this amount each cycle
 
 // Round Robin Scheduling (preemptive)
-#if ALGOR == ALGOR_R_R
+#if ALGOR == ALGOR_RR
 	#define TIME_JIFFY 1.0
 // FIFO and SJF Scheduling (both are non-preemptive for this lab)
 #else

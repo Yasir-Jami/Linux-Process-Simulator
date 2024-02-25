@@ -64,16 +64,13 @@ struct node* admit(struct node* ready_queue)
 	return ready_queue;
 }
 
-struct node* dispatch(struct node** ready_queue, struct node** running_queue, int pid){
-	struct node* process = popAtPID(ready_queue, pid); // Pop from ready queue at the given pid
-	running_queue = push(running_queue, pid, 2, process->niceness, process->cputime, process->proctime);
-	return running_queue;
+// Round Robin: rotate out currently running process and push it to ready queue
+void rotate(struct node** ready_queue, struct node** running_queue){
+	struct node* process = pop(running_queue);
+	append(ready_queue, process);
 }
 
-/*
- * Change to get all information from ready queue and add to the file
- */
-void addLogEntry(struct node* process, int current_time, int status){
+void addLogEntry(struct node* ready_queue, struct node* running_queue, int time){
 	FILE *fp = NULL;
 	char fname[50] = "";
 	char pathname[] = "../log/logfile";
@@ -91,8 +88,6 @@ void addLogEntry(struct node* process, int current_time, int status){
 	
 	// Append log entry to logfile
 	fp = fopen(fname, "a");
-/*	
-	// Add a loop to print the current status of all processes from ready and running queue
 	// Ready Queue
 	while (ready_queue != NULL){
 		fprintf(fp, "%d, %d, %d, %d, %f, %f\n", current_time, ready_queue->pid, ready_queue->status, 
@@ -104,18 +99,15 @@ void addLogEntry(struct node* process, int current_time, int status){
 	fprintf(fp, "%d, %d, %d, %d, %f, %f\n", current_time, running_queue->pid, running_queue->status, 
 			running_queue->niceness, running_queue->cputime, running_queue->proctime);
 			running_queue = running_queue->next;
-	}
-*/
-	fprintf(fp, "%d, %d, %d, %d, %f, %f\n", current_time, process->pid, status, process->niceness, process->cputime, process->proctime);
-	
+	}	
 	fclose(fp);
 }
 
 // Pop according to the scheduling algorithm used
-struct node* popFromReadyQueue(struct node** ready_queue, char* algorithm_used){
+struct node* popFromReadyQueue(struct node** ready_queue, char* algorithm){
 	// SJF - Get PID of the process with the lowest proctime
 	if (strcmp(algorithm, "ALGOR_SJF") == 0){
-		struct node* temp = ready_queue;
+		struct node* temp = *ready_queue;
 		while (temp != NULL){
 			if (temp->proctime < lowest_time){
 				pid = temp->pid;

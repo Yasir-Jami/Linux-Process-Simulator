@@ -18,13 +18,13 @@ struct node* initializeList();
 /* Data Structure (linked list) Operations */
 struct node* push(struct node*, int, int, int, double, double);
 
-struct node* append(struct node* target, struct node* src);
+struct node* append(struct node** target, struct node** src);
 
 struct node* popAtEnd(struct node* head);
 
-struct node* pop(struct node*);
+struct node* pop(struct node**);
 
-struct node* popAtPID(struct node* head, int pid);
+struct node* popAtPID(struct node** head, int pid);
 
 void freeList(struct node* head);
 

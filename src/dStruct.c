@@ -18,10 +18,10 @@ struct node* push(struct node* head, int _pid, int _status, int _niceness, doubl
 	return(newNode);
 }
 
-struct node* append(struct node* head, struct node* nodeToPush){
+struct node* append(struct node** head, struct node** nodeToPush){
 	if (head == NULL){
-		head = pop(nodeToPush);
-		return head;
+		*head = pop(nodeToPush);
+		return *head;
 	}
 
 	// Create a new node based on nodeToPush's attributes
@@ -30,20 +30,20 @@ struct node* append(struct node* head, struct node* nodeToPush){
 		exit(EXIT_FAILURE);
 	}
 	
-	end_node->pid = nodeToPush->pid;
-	end_node->status = nodeToPush->status;
-	end_node->niceness = nodeToPush->niceness;
-	end_node->cputime = nodeToPush->cputime;
-	end_node->proctime = nodeToPush->proctime;
+	end_node->pid = (*nodeToPush)->pid;
+	end_node->status = (*nodeToPush)->status;
+	end_node->niceness = (*nodeToPush)->niceness;
+	end_node->cputime = (*nodeToPush)->cputime;
+	end_node->proctime = (*nodeToPush)->proctime;
 
-	struct node* temp = head;
+	struct node* temp = *head;
 	while (temp->next != NULL){
 		temp = temp->next;
 	}
 	temp->next = end_node;
 	end_node->next = NULL;
 
-	return head;
+	return *head;
 }
 
 bool isEmpty(struct node* list){
@@ -55,35 +55,35 @@ bool isEmpty(struct node* list){
 }
 
 // Test multiple pops with valgrind - could be leaking
-struct node* pop(struct node* head){
-	if (head == NULL){
-		return head;
+struct node* pop(struct node** head){
+	if (*head == NULL){
+		return *head;
 	}
 
 	struct node* temp = NULL;
-	temp = push(temp, head->pid, head->status, head->niceness, head->cputime, head->proctime);
-	if (head->next == NULL){
-		(*head).pid = -1;	
-		//free(head);	
+	temp = push(temp, (*head)->pid, (*head)->status, (*head)->niceness, (*head)->cputime, (*head)->proctime);
+	if ((*head)->next == NULL){
+		free(*head);
+		*head = NULL;
 		return temp;
 	}
 	
 	// Copy head node into temp
 	// May cause leak, use valgrind
-	*head = *head->next; // Change head node to next node
+	(*head) = (*head)->next; // Change head node to next node
 	temp->next = NULL; // Break off link to list
 	return(temp);
 }
 
-struct node* popAtPID(struct node* head, int pid){
-	if (isEmpty(head) == true){
-		return head;
+struct node* popAtPID(struct node** head, int pid){
+	if (isEmpty(*head) == true){
+		return *head;
 	}
-	if (head->pid == pid){
+	if ((*head)->pid == pid){
 		return pop(head);
 	}
 
-	struct node* temp = head;
+	struct node* temp = *head;
 	struct node* prev = temp;
 
 	while (temp != NULL){
