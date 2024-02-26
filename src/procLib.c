@@ -1,3 +1,7 @@
+/* 
+Name: Yasir Jami & Cole Doris
+360 Lab 5 (Group 4)
+*/
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
@@ -56,7 +60,7 @@ struct node* admit(struct node* ready_queue)
                 proctime = atof(token);
 
 		// After reading from file, make a new process and add to ready queue
-		printf("Adding process %s to ready queue %d with PID %d...\n", file->d_name, niceness, file_count);
+		printf("Adding process %s to ready queue with PID %d...\n", file->d_name, file_count);
 		ready_queue = push(ready_queue, file_count, 1, niceness, 0.0, proctime);
 		file_count++;
 	}
@@ -64,58 +68,56 @@ struct node* admit(struct node* ready_queue)
 	return ready_queue;
 }
 
-// Look into popping from the ready_queue directly - maybe *ready_queue = pop(process)?
-struct node* dispatch(struct node* ready_queue, struct node* running_queue, int pid){
-	//process = getEntry(ready_queue, pid);
-	//running_queue = push(running_queue, pid, 2, process->niceness, process->cputime, process->proctime);
-	struct node* process = popAtPID(ready_queue, pid); // Pop from ready queue at the given pid;	
-	ready_queue = pop(process);	
-	return running_queue;
+// Round Robin: rotate out currently running process and push it to ready queue
+void rotate(struct node** ready_queue, struct node** running_queue){
+	struct node* process = pop(running_queue);
+	process->status = 1;
+	append(ready_queue, &process);
 }
 
-void addLogEntry(struct node* process, int current_time, int status){
+void addLogEntry(struct node* ready_queue, struct node* running_queue, double current_time, char* filename){
 	FILE *fp = NULL;
-	char* fname = "../log/logfile";
-	char* algorithm = ALGOR;
-	*algorithm += 6;
-	strncat(fname, '-', 2);
-	strncat(fname, algorithm, 16); // logfile-RR
-	
-	// Check if file exists, if it does not create it, otherwise append
-	if ((access(fname, F_OK)) == 0){
-		fp = fopen(fname, "a");
-		fprintf(fp, "%d, %d, %d, %d, %f, %f\n", current_time, process->pid, status, process->niceness, process->cputime, process->proctime);
+
+	// Append log entry to logfile
+	fp = fopen(filename, "a");
+	// Ready Queue
+	while (ready_queue != NULL){
+		fprintf(fp, "%f, %d, %d, %d, %f, %f\n", current_time, ready_queue->pid, ready_queue->status, 
+				ready_queue->niceness, ready_queue->cputime, ready_queue->proctime);
+		ready_queue = ready_queue->next;
 	}
-	else{
-		fp = fopen(fname , "w");
-		fprintf(fp, "%d, %d, %d, %d, %f, %f\n", current_time, process->pid, status, process->niceness, process->cputime, process->proctime);
-	}
+	// Running Queue - loop used in case we have multiple processes later 
+	while (running_queue != NULL){
+	fprintf(fp, "%f, %d, %d, %d, %f, %f\n", current_time, running_queue->pid, running_queue->status, 
+			running_queue->niceness, running_queue->cputime, running_queue->proctime);
+			running_queue = running_queue->next;	
+		}
 	fclose(fp);
 }
 
 // Pop according to the scheduling algorithm used
-struct node* popNode(struct node* queue, char* algorithm_used){
+struct node* popFromReadyQueue(struct node** ready_queue, char* algorithm){
+	struct node* process = NULL;
 	// SJF - Get PID of the process with the lowest proctime
-	if (strcmp(algorithm, "ALGOR_SJF") == 0){
-		struct node* temp = ready_queue;
+	if (strcmp(algorithm, "ALGOR_SJF") == 0){	
+		struct node* temp = *ready_queue;
+		double lowest_time = 500.0;
+		int pid = 0;
 		while (temp != NULL){
 			if (temp->proctime < lowest_time){
 				pid = temp->pid;
+				lowest_time = temp->proctime;
 			}
 			temp = temp->next;
 		}
-		struct node* process = popAtPid(ready_queue, pid);
+		process = popAtPid(ready_queue, pid);
 	}
 	// FIFO - Pop the first process added
-	else if (strcmp(algorithm, "ALGOR_FIFO")){struct node* process = popAtEnd(ready_queue);}
+	else if (strcmp(algorithm, "ALGOR_FIFO")){process = popAtEnd(ready_queue);}
 	// RR and MLFQ - Pop normally
-	else{struct node* process = pop(ready_queue);}
+	else{process = pop(ready_queue);}
+
+	process->status = 2;
 
 	return process;
-}
-
-void pushToNextQueue(struct node* higher_queue, struct node* lower_queue){
-	higher_queue
-	
-	
 }
