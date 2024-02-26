@@ -60,8 +60,8 @@ struct node* admit(struct node* ready_queue)
                 proctime = atof(token);
 
 		// After reading from file, make a new process and add to ready queue
-		printf("Adding process %s to ready queue with PID %d...\n", file->d_name, file_count);
-		ready_queue = push(ready_queue, file_count, 1, niceness, 0.0, proctime);
+		printf("Adding process %s to ready queue with PID %d...\n", file->d_name, file_count);	
+		ready_queue = push(ready_queue, file_count, 1, niceness, 0.0, proctime);	
 		file_count++;
 	}
 	closedir(processDir);
@@ -97,7 +97,6 @@ void addLogEntry(struct node* ready_queue, struct node* running_queue, double cu
 
 // Pop according to the scheduling algorithm used
 struct node* popFromReadyQueue(struct node** ready_queue, char* algorithm){
-	struct node* process = NULL;
 	// SJF - Get PID of the process with the lowest proctime
 	if (strcmp(algorithm, "ALGOR_SJF") == 0){	
 		struct node* temp = *ready_queue;
@@ -110,14 +109,12 @@ struct node* popFromReadyQueue(struct node** ready_queue, char* algorithm){
 			}
 			temp = temp->next;
 		}
-		process = popAtPid(ready_queue, pid);
+		return popAtPid(ready_queue, pid);
 	}
 	// FIFO - Pop the first process added
-	else if (strcmp(algorithm, "ALGOR_FIFO")){process = popAtEnd(ready_queue);}
+	else if (strcmp(algorithm, "ALGOR_FIFO") == 0){
+		return popAtEnd(ready_queue);
+	}
 	// RR and MLFQ - Pop normally
-	else{process = pop(ready_queue);}
-
-	process->status = 2;
-
-	return process;
+	return pop(ready_queue);
 }

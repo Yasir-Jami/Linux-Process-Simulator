@@ -73,7 +73,7 @@ struct node* pop(struct node** head){
 	return(temp);
 }
 
-// Check for leaks - especially when changing connections
+// Check for leak when changing connections
 struct node* popAtPid(struct node** head, int pid){
 	if (isEmpty(*head) == true){
 		return *head;
@@ -98,13 +98,12 @@ struct node* popAtPid(struct node** head, int pid){
 }
 
 // Will be O(n) every time - similar to popAtPid, but only pops at end
-// Check for leaks - especially when changing connections
 struct node* popAtEnd(struct node** head){
 	if (isEmpty(*head) == true){
 		return *head;
 	}
 	if ((*head)->next == NULL){
-		struct node* process = pop(head); // Frees space
+		struct node* process = pop(head);
 		return process;
 	}
 	
@@ -117,10 +116,10 @@ struct node* popAtEnd(struct node** head){
 		if (temp->next == NULL){
 			prev->next = temp->next;
 			temp->next = NULL;
-			return temp;
+			return pop(&temp);
 		}
 	}
-	return *head;
+	return temp;
 }
 
 void freeList(struct node* head){
@@ -254,7 +253,7 @@ void setStatus(struct node* list, int pid, int new_status){
 	}
 }
 
-float getCpuTime(struct node* list, int pid){
+double getCpuTime(struct node* list, int pid){
 	if (isEmpty(list) == true){
 		return -1.0;
 	}
@@ -282,6 +281,22 @@ void setCpuTime(struct node* list, int pid, double new_cputime){
 		temp = temp->next;
 	}
 }
+
+double getProcTime(struct node* list, int pid){
+	if (isEmpty(list) == true){
+		return -1.0;
+	}
+
+	struct node *temp = list;
+	while (temp != NULL){
+		if (temp->pid == pid){
+			return temp->proctime;
+		}
+		temp = temp->next;
+	}
+	return -1.0; // PID does not exist
+}
+
 
 bool find(struct node* list, int pid){
 	if (isEmpty(list) == true){

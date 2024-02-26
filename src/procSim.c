@@ -19,14 +19,13 @@ Name: Yasir Jami & Cole Doris
 int main(void){
 	// Queues	
 	struct node* ready_queue = NULL; // Holds processes ready to run 
-	struct node* running_queue = NULL; // Holds processes that are running	
-	struct node* process = NULL; // Used to pass processes to running queue 
+	struct node* running_queue = NULL; // Holds processes that are running		
 	// Timing
 	double timer = 0.0; // Global timer	
 	double time_dt = TIME_DT; // Time increment
-	double time_qt = TIME_JIFFY; // Max allowed time for a process to run before swapping - essentially equal to proctime for SJF and FIFO
-	char algorithm[24] = ALGOR; // Scheduling Algorithm		
-
+	double time_qt = 1.0; // Max allowed time for a process to run before swapping - essentially equal to proctime for SJF and FIFO
+	char algorithm[24] = "ALGOR_FIFO"; // Scheduling Algorithm
+	
 	// Create logfile
 	FILE* fp = NULL;
 	char filename[100] = "";
@@ -40,11 +39,13 @@ int main(void){
 		i++;
 	}	
 	sprintf(filename, "%s-%s-%s", pathname, date, algorithm);
+	char* name = filename + strlen(pathname)+1; // Without pathname
+	printf("Using %s\n", algorithm);
+	printf("Storing in %s\n\n", name);
 	fp = fopen(filename, "w"); // Will truncate logfile of the same name to 0 if one is present
 	fclose(fp);
 
-	// Add all processes to ready queue
-	printf("Using %s\n", algorithm);
+	// Add all processes to ready queue	
 	ready_queue = admit(ready_queue);
 	// Increment time by (time_delta * # of processes)
 	printf("\n");
@@ -53,24 +54,25 @@ int main(void){
 	while (ready_queue){
 		// Add process to running queue according to algorithm used, remove process from ready queue
 		running_queue = popFromReadyQueue(&ready_queue, algorithm);
+		running_queue->status = 2;
 		printf("Dispatching process with PID %d to running queue...\n", running_queue->pid);
 		addLogEntry(ready_queue, running_queue, timer, filename);
 
 		// Main Process Loop - stop when the process's cputime meets or exceeds proctime
-		while ((getCpuTime(running_queue, running_queue->pid) != running_queue->proctime) &&
-			(getCpuTime(running_queue, running_queue->pid) < running_queue->proctime)){
+		while ((getCpuTime(running_queue, running_queue->pid) != running_queue->proctime) && 
+		      (getCpuTime(running_queue, running_queue->pid) < running_queue->proctime)){	
 		
-		// Increment global time and add a new log entry for every process in both queues
+			// Increment global time and add a new log entry for every process in both queues
 			timer+=time_dt;
 			running_queue->cputime+=time_dt;
 			addLogEntry(ready_queue, running_queue, timer, filename);
 
-			// Check if global time has elapsed a jiffy
-			if ((strcmp(algorithm, "ALGOR_RR") == 0) && ((fmod(running_queue->cputime, time_qt)) == 0)){
+			// For Round Robin, check if global time has elapsed a jiffy
+			if (((strcmp(algorithm, "ALGOR_RR") == 0)) && ((fmod(getCpuTime(running_queue, running_queue->pid), 1.0)) == 0)){
 				printf("Rotating process with PID %d to ready queue", running_queue->pid);
 				rotate(&ready_queue, &running_queue); // Rotate current process into ready queue
+				printf("Dispatching process with PID %d to running queue...\n", ready_queue->pid);
 				running_queue = pop(&ready_queue);
-				printf("Dispatching process with PID %d to running queue...\n", process->pid);
 			}
 		}
 		// Note that process has finished and make a log entry

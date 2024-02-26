@@ -43,9 +43,11 @@ int getStatus(struct node*, int pid);
 
 void setStatus(struct node*, int pid, int new_status);
 
-float getCpuTime(struct node*, int pid);
+double getCpuTime(struct node*, int pid);
 
 void setCpuTime(struct node*, int pid, double new_cputime);
+
+double getProcTime(struct node* list, int pid);
 
 /* Search Functions */
 bool find(struct node*, int pid);
