@@ -1,36 +1,17 @@
 #include <stdio.h>
 #include "dStruct.h"
-
-//void moveToEnd(struct** node);
-
-void moveToEnd(struct node** queue){
-	int i = 0;
-	while (*queue != NULL){	
-		*queue = (*queue)->next;
-		i++;
-	}
-}
+#include <math.h>
 
 int main(void){
-	struct node* queue1 = initializeList();
+	double d1 = 2.0;
+	double d2 = 2.0;
 
-	//printf("Before queue1 node removal:\n");
-//	printEntries(queue1);
-
-	struct node* queue2 = pop(&queue1);
-	//moveToEnd(&queue1);
-
-	//printEntries(queue1);
-	//printEntries(queue2);
-	struct node* queue3 = pop(&queue2);
-
-	queue2 = pop(&queue3);
-	queue3 = pop(&queue2);
-
-	printf("Queue 2 Status:\n");
-	printEntries(queue2);
-	printf("Queue 3 Status:\n");
-	printEntries(queue3);
+	if (fmod(d1, d2) == 0){
+		printf("Modulus of d1\n");
+	}
+	else{
+		printf("Not modulus of d1\n");
+	}
 
 	return 0;
 }

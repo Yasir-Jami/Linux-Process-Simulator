@@ -68,14 +68,13 @@ struct node* pop(struct node** head){
 		return temp;
 	}
 	
-	// Copy head node into temp
-	// May cause leak, use valgrind
 	(*head) = (*head)->next; // Change head node to next node
 	temp->next = NULL; // Break off link to list
 	return(temp);
 }
 
-struct node* popAtPID(struct node** head, int pid){
+// Check for leaks - especially when changing connections
+struct node* popAtPid(struct node** head, int pid){
 	if (isEmpty(*head) == true){
 		return *head;
 	}
@@ -88,7 +87,7 @@ struct node* popAtPID(struct node** head, int pid){
 
 	while (temp != NULL){
 		if (temp->pid == pid){
-			prev->next = temp->next; // Change prev's connection to the one after temp
+			prev->next = temp->next;	
 			temp->next = NULL;
 			return temp;
 		}
@@ -99,15 +98,17 @@ struct node* popAtPID(struct node** head, int pid){
 }
 
 // Will be O(n) every time - similar to popAtPid, but only pops at end
-struct node* popAtEnd(struct node* head){
-	if (isEmpty(head) == true){
-		return head;
+// Check for leaks - especially when changing connections
+struct node* popAtEnd(struct node** head){
+	if (isEmpty(*head) == true){
+		return *head;
 	}
-	if (head->next == NULL){
-		return head;
+	if ((*head)->next == NULL){
+		struct node* process = pop(head); // Frees space
+		return process;
 	}
 	
-	struct node* temp = head;
+	struct node* temp = *head;
 	struct node* prev = temp;
 
 	while (temp != NULL){
@@ -119,7 +120,7 @@ struct node* popAtEnd(struct node* head){
 			return temp;
 		}
 	}
-	return head;
+	return *head;
 }
 
 void freeList(struct node* head){

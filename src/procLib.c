@@ -1,3 +1,7 @@
+/* 
+Name: Yasir Jami & Cole Doris
+360 Lab 5 (Group 4)
+*/
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
@@ -56,7 +60,7 @@ struct node* admit(struct node* ready_queue)
                 proctime = atof(token);
 
 		// After reading from file, make a new process and add to ready queue
-		printf("Adding process %s to ready queue %d with PID %d...\n", file->d_name, niceness, file_count);
+		printf("Adding process %s to ready queue with PID %d...\n", file->d_name, file_count);
 		ready_queue = push(ready_queue, file_count, 1, niceness, 0.0, proctime);
 		file_count++;
 	}
@@ -67,59 +71,53 @@ struct node* admit(struct node* ready_queue)
 // Round Robin: rotate out currently running process and push it to ready queue
 void rotate(struct node** ready_queue, struct node** running_queue){
 	struct node* process = pop(running_queue);
-	append(ready_queue, process);
+	process->status = 1;
+	append(ready_queue, &process);
 }
 
-void addLogEntry(struct node* ready_queue, struct node* running_queue, int time){
+void addLogEntry(struct node* ready_queue, struct node* running_queue, double current_time, char* filename){
 	FILE *fp = NULL;
-	char fname[50] = "";
-	char pathname[] = "../log/logfile";
-	char date[16]  = __DATE__;
-	char algorithm[12] = ALGOR;
-	int i = 0;
 
-	while (date[i] != '\0'){		
-		if (date[i] == ' '){
-			date[i] = '-';
-		}
-		i++;
-	}	
-	sprintf(fname, "%s-%s-%s", pathname, date, algorithm); // Form full logfile name
-	
 	// Append log entry to logfile
-	fp = fopen(fname, "a");
+	fp = fopen(filename, "a");
 	// Ready Queue
 	while (ready_queue != NULL){
-		fprintf(fp, "%d, %d, %d, %d, %f, %f\n", current_time, ready_queue->pid, ready_queue->status, 
+		fprintf(fp, "%f, %d, %d, %d, %f, %f\n", current_time, ready_queue->pid, ready_queue->status, 
 				ready_queue->niceness, ready_queue->cputime, ready_queue->proctime);
 		ready_queue = ready_queue->next;
 	}
 	// Running Queue - loop used in case we have multiple processes later 
 	while (running_queue != NULL){
-	fprintf(fp, "%d, %d, %d, %d, %f, %f\n", current_time, running_queue->pid, running_queue->status, 
+	fprintf(fp, "%f, %d, %d, %d, %f, %f\n", current_time, running_queue->pid, running_queue->status, 
 			running_queue->niceness, running_queue->cputime, running_queue->proctime);
-			running_queue = running_queue->next;
-	}	
+			running_queue = running_queue->next;	
+		}
 	fclose(fp);
 }
 
 // Pop according to the scheduling algorithm used
 struct node* popFromReadyQueue(struct node** ready_queue, char* algorithm){
+	struct node* process = NULL;
 	// SJF - Get PID of the process with the lowest proctime
-	if (strcmp(algorithm, "ALGOR_SJF") == 0){
+	if (strcmp(algorithm, "ALGOR_SJF") == 0){	
 		struct node* temp = *ready_queue;
+		double lowest_time = 500.0;
+		int pid = 0;
 		while (temp != NULL){
 			if (temp->proctime < lowest_time){
 				pid = temp->pid;
+				lowest_time = temp->proctime;
 			}
 			temp = temp->next;
 		}
-		struct node* process = popAtPid(ready_queue, pid);
+		process = popAtPid(ready_queue, pid);
 	}
 	// FIFO - Pop the first process added
-	else if (strcmp(algorithm, "ALGOR_FIFO")){struct node* process = popAtEnd(ready_queue);}
+	else if (strcmp(algorithm, "ALGOR_FIFO")){process = popAtEnd(ready_queue);}
 	// RR and MLFQ - Pop normally
-	else{struct node* process = pop(ready_queue);}
+	else{process = pop(ready_queue);}
+
+	process->status = 2;
 
 	return process;
 }

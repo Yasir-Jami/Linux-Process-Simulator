@@ -1,3 +1,8 @@
+/* 
+Name: Yasir Jami & Cole Doris
+360 Lab 5 (Group 4)
+*/
+
 #ifndef PROCLIB_H
 #define PROCLIB_H
 
@@ -21,7 +26,12 @@ struct node* processExit(struct node* running_queue);
  * Appends current status of process as a new log entry to a file located in the log directory 
  */
 
-void addLogEntry(struct node* ready_queue, struct node* running_queue, int time);
+void addLogEntry(struct node* ready_queue, struct node* running_queue, double time, char* filename);
+
+/*
+ * Pop from ready queue according to algorithm
+ */
+struct node* popFromReadyQueue(struct node** ready_queue, char* algorithm);
 
 /*
  *  Round Robin - rotate process out of running queue and back into ready
@@ -30,13 +40,18 @@ void rotate(struct node** ready_queue, struct node** running_queue);
 
 #endif
 
-#define ALGOR ALGOR_SJF
+/*
+#define ALGOR "ALGOR_SJF"
 #define TIME_DT 0.1 // Increment timer by this amount each cycle
 
 // Round Robin Scheduling (preemptive)
-#if ALGOR == ALGOR_RR
+#if ALGOR == "ALGOR_RR"
 	#define TIME_JIFFY 1.0
 // FIFO and SJF Scheduling (both are non-preemptive for this lab)
 #else
 	#define TIME_JIFFY 0.0
 #endif
+*/
+
+#define TIME_DT 0.1 // Increment timer by this amount each cycle
+#define TIME_JIFFY 0.0
