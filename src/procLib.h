@@ -40,18 +40,10 @@ void rotate(struct node** ready_queue, struct node** running_queue);
 
 #endif
 
-/*
-#define ALGOR "ALGOR_SJF"
-#define TIME_DT 0.1 // Increment timer by this amount each cycle
-
-// Round Robin Scheduling (preemptive)
-#if ALGOR == "ALGOR_RR"
-	#define TIME_JIFFY 1.0
-// FIFO and SJF Scheduling (both are non-preemptive for this lab)
-#else
-	#define TIME_JIFFY 0.0
-#endif
-*/
+// Scheduling Algorithm Macros
+#define str(s) #s
+#define xstr(s) str(s)
+#define ALGOR ALGOR_RR
 
 #define TIME_DT 0.1 // Increment timer by this amount each cycle
-#define TIME_JIFFY 0.0
+#define TIME_JIFFY 1.0 // Time at which a process rotates out of running queue

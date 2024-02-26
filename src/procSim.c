@@ -23,9 +23,8 @@ int main(void){
 	// Timing
 	double timer = 0.0; // Global timer	
 	double time_dt = TIME_DT; // Time increment
-	double time_qt = 1.0; // Max allowed time for a process to run before swapping - essentially equal to proctime for SJF and FIFO
-	char algorithm[24] = "ALGOR_FIFO"; // Scheduling Algorithm
-	
+	double time_qt = TIME_JIFFY; // Max allowed time for a process to run before swapping - essentially equal to proctime for SJF and FIFO
+	char algorithm[24] = xstr(ALGOR); // Scheduling Algorithm - macro expands to name
 	// Create logfile
 	FILE* fp = NULL;
 	char filename[100] = "";
@@ -58,17 +57,15 @@ int main(void){
 		printf("Dispatching process with PID %d to running queue...\n", running_queue->pid);
 		addLogEntry(ready_queue, running_queue, timer, filename);
 
-		// Main Process Loop - stop when the process's cputime meets or exceeds proctime
-		while ((getCpuTime(running_queue, running_queue->pid) != running_queue->proctime) && 
-		      (getCpuTime(running_queue, running_queue->pid) < running_queue->proctime)){	
-		
-			// Increment global time and add a new log entry for every process in both queues
+		// Main Process Loop - stop when the process's cputime meets or exceeds proctime	
+		while (getCpuTime(running_queue, running_queue->pid) <= running_queue->proctime){
+			// Increment global time and add a new log entry for every process in both queues			
 			timer+=time_dt;
 			running_queue->cputime+=time_dt;
 			addLogEntry(ready_queue, running_queue, timer, filename);
 
 			// For Round Robin, check if global time has elapsed a jiffy
-			if (((strcmp(algorithm, "ALGOR_RR") == 0)) && ((fmod(getCpuTime(running_queue, running_queue->pid), 1.0)) == 0)){
+			if (((strcmp(algorithm, "ALGOR_RR") == 0)) && ((fmod(getCpuTime(running_queue, running_queue->pid), time_qt)) == 0)){
 				printf("Rotating process with PID %d to ready queue", running_queue->pid);
 				rotate(&ready_queue, &running_queue); // Rotate current process into ready queue
 				printf("Dispatching process with PID %d to running queue...\n", ready_queue->pid);
