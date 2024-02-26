@@ -42,7 +42,7 @@ int main(void){
 	printf("Using %s\n", algorithm);
 	printf("Storing in %s\n\n", name);
 	fp = fopen(filename, "w"); // Will truncate logfile of the same name to 0 if one is present
-	fclose(fp);
+	fclose(fp);	
 
 	// Add all processes to ready queue	
 	ready_queue = admit(ready_queue);
