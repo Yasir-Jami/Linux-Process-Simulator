@@ -1,4 +1,4 @@
-/* 
+/*
 Name: Yasir Jami & Cole Doris
 360 Lab 5 (Group 4)
 */
@@ -16,8 +16,8 @@ Name: Yasir Jami & Cole Doris
 // 2: Running
 // 3: Complete
 
-int main(void){
-	// Queues	
+int main(int argc, char* argv[]){
+	// Queues
 	struct node* ready_queue = NULL; // Holds processes ready to run
 	struct node* running_queue = NULL; // Holds processes that are running
 	// Timing
@@ -25,8 +25,20 @@ int main(void){
 	double time_dt = TIME_DT; // Time increment
 	double time_qt = TIME_JIFFY; // Time slice - max allowed time for a process to run before swapping - essentially equal to proctime for SJF and FIFO
 	double elapsed = 0.0; // Tracks how long a process has been running for RR
+	
 	// Create logfile
-	char algorithm[24] = xstr(ALGOR); // Scheduling Algorithm - macro found in procLib.h 
+	char algorithm[24] = xstr(ALGOR); // Scheduling Algorithm - macro found in procLib.h
+
+	if (argc > 1) {
+		if (!strcmp(argv[1], "0")) {
+			strcpy(algorithm, "ALGOR_FIFO");
+		} else if (!strcmp(argv[1], "1")) {
+			strcpy(algorithm, "ALGOR_SJF");
+		} else if (!strcmp(argv[1], "2")) {
+			strcpy(algorithm, "ALGOR_RR");
+		}
+	}
+
 	FILE* fp = NULL;
 	char filename[100] = "";
 	char pathname[] = "../log/logfile";
@@ -37,15 +49,15 @@ int main(void){
 			date[i] = '-';
 		}
 		i++;
-	}	
+	}
 	sprintf(filename, "%s-%s-%s", pathname, date, algorithm);
 	char* name = filename + strlen(pathname)+1; // Without pathname
 	printf("Using %s\n", algorithm);
 	printf("Storing in %s\n\n", name);
 	fp = fopen(filename, "w"); // Will truncate logfile of the same name to 0 if one is present
-	fclose(fp);	
+	fclose(fp);
 
-	// Add all processes to ready queue	
+	// Add all processes to ready queue
 	ready_queue = admit(ready_queue);
 	// Increment time by (time_delta * # of processes)
 	printf("\n");

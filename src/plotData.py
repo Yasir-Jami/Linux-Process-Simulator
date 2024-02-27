@@ -2,12 +2,13 @@ from graphics import *
 from PIL import Image as otherImage
 import sys
 import os.path
-filename = "../log/logfile*"
+filename = sys.argv[1]
 displayWidth = 500
 
 
-def main():
-    file = open(filename)
+def main(fn = filename):
+    print(fn)
+    file = open(fn)
     data = getData(file)
     widths = getWidths(data, displayWidth)
     colours = []
@@ -21,7 +22,7 @@ def main():
     for i in range(len(widths)):
         #if data[i][2] != '1':
         rect = Rectangle(Point(buffer,100),Point(buffer+(widths[i]),200))
-        tex=Text(Point(buffer+(widths[i]/2),150), int(data[i][1]))
+        tex=Text(Point(buffer+(widths[i]/2),150), data[i][1])
         buffer += widths[i]
         rect.setFill(colours[i])
         rect.draw(win)
@@ -88,12 +89,16 @@ def getData(file):
     return procs
  
  
+ 
 def generateColour(num):
-    num = num*150
-    r = int(num%255)
-    g = int(255 - r)
-    b = int((num**2)%255)
-    return color_rgb(r,g,b)
+    r = int(num%3%255)
+    g = int(255 - 1/(r+1))
+    b = int(num**2%255%5)
+    if num % 3 == 0:
+        return color_rgb(r,g,b)
+    if num%5 == 0:
+        return color_rgb(b,r,g)
+    return color_rgb(g,b,r)
 
 def getAmtProcs(array):
     pids = []
@@ -130,5 +135,6 @@ def getAvgRt(array):
             
     return (summa / len(pids))
 
-if __name__ == '__main__':
-    main()
+if __name__ == "__main__":
+	main()
+
