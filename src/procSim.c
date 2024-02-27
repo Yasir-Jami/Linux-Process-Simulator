@@ -18,14 +18,15 @@ Name: Yasir Jami & Cole Doris
 
 int main(void){
 	// Queues	
-	struct node* ready_queue = NULL; // Holds processes ready to run 
-	struct node* running_queue = NULL; // Holds processes that are running		
+	struct node* ready_queue = NULL; // Holds processes ready to run
+	struct node* running_queue = NULL; // Holds processes that are running
 	// Timing
-	double timer = 0.0; // Global timer	
+	double timer = 0.0; // Global timer
 	double time_dt = TIME_DT; // Time increment
-	double time_qt = TIME_JIFFY; // Max allowed time for a process to run before swapping - essentially equal to proctime for SJF and FIFO
-	char algorithm[24] = xstr(ALGOR); // Scheduling Algorithm - macro expands to name
+	double time_qt = TIME_JIFFY; // Time slice - max allowed time for a process to run before swapping - essentially equal to proctime for SJF and FIFO
+	double elapsed = 0.0; // Tracks how long a process has been running for RR
 	// Create logfile
+	char algorithm[24] = xstr(ALGOR); // Scheduling Algorithm - macro found in procLib.h 
 	FILE* fp = NULL;
 	char filename[100] = "";
 	char pathname[] = "../log/logfile";
@@ -55,7 +56,8 @@ int main(void){
 		running_queue = popFromReadyQueue(&ready_queue, algorithm);
 		running_queue->status = 2;
 		printf("Dispatching process with PID %d to running queue...\n", running_queue->pid);
-		addLogEntry(ready_queue, running_queue, timer, filename);
+		addLogEntry(ready_queue, running_queue, timer, filename);	
+		elapsed = 0.1;
 
 		// Main Process Loop - stop when the process's cputime meets or exceeds proctime	
 		while (getCpuTime(running_queue, running_queue->pid) <= running_queue->proctime){
@@ -65,13 +67,17 @@ int main(void){
 			addLogEntry(ready_queue, running_queue, timer, filename);
 
 			// For Round Robin, check if global time has elapsed a jiffy
-			if (((strcmp(algorithm, "ALGOR_RR") == 0)) && ((fmod(getCpuTime(running_queue, running_queue->pid), time_qt)) == 0)){
-				printf("Rotating process with PID %d to ready queue", running_queue->pid);
-				rotate(&ready_queue, &running_queue); // Rotate current process into ready queue
-				printf("Dispatching process with PID %d to running queue...\n", ready_queue->pid);
-				running_queue = pop(&ready_queue);
+			if ((strcmp(algorithm, "ALGOR_RR") == 0)){
+				elapsed+=time_dt;
+				// Rotate process back into ready queue, add next process to running
+				if (elapsed > time_qt && ready_queue != NULL){		
+					rotate(&ready_queue, &running_queue); // Rotate current process into ready queue
+					//printf("Dispatching process with PID %d to running queue...\n", ready_queue->pid);
+					running_queue = pop(&ready_queue);
+					elapsed = 0.1;
+				}
 			}
-		}
+		}	
 		// Note that process has finished and make a log entry
 		running_queue->status = 3;
 		printf("Process with PID %d ran for %f seconds.\n", running_queue->pid, running_queue->cputime);
