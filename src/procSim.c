@@ -67,17 +67,16 @@ int main(void){
 			addLogEntry(ready_queue, running_queue, timer, filename);
 
 			// For Round Robin, check if global time has elapsed a jiffy
-			if ((strcmp(algorithm, "ALGOR_RR") == 0)){
+			if ((strcmp(algorithm, "ALGOR_RR") == 0) && ready_queue){
 				elapsed+=time_dt;
 				// Rotate process back into ready queue, add next process to running
-				if (elapsed > time_qt && ready_queue != NULL){		
-					rotate(&ready_queue, &running_queue); // Rotate current process into ready queue
-					//printf("Dispatching process with PID %d to running queue...\n", ready_queue->pid);
+				if (elapsed > time_qt){
+					rotate(&ready_queue, &running_queue); // Rotate current process into ready queue	
 					running_queue = pop(&ready_queue);
 					elapsed = 0.1;
 				}
 			}
-		}	
+		}
 		// Note that process has finished and make a log entry
 		running_queue->status = 3;
 		printf("Process with PID %d ran for %f seconds.\n", running_queue->pid, running_queue->cputime);
