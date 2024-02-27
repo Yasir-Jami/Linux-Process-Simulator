@@ -49,6 +49,7 @@ int main(void){
 	ready_queue = admit(ready_queue);
 	// Increment time by (time_delta * # of processes)
 	printf("\n");
+	addLogEntry(ready_queue, running_queue, timer, filename);
 
 	// Add processes to running queue while all queues are not equal to null
 	while (ready_queue){
@@ -56,7 +57,8 @@ int main(void){
 		running_queue = popFromReadyQueue(&ready_queue, algorithm);
 		running_queue->status = 2;
 		printf("Dispatching process with PID %d to running queue...\n", running_queue->pid);
-		addLogEntry(ready_queue, running_queue, timer, filename);	
+		timer+=time_dt;
+		addLogEntry(ready_queue, running_queue, timer, filename);
 		elapsed = 0.1;
 
 		// Main Process Loop - stop when the process's cputime meets or exceeds proctime	
