@@ -138,12 +138,12 @@ void freeList(struct node* head){
 // Using default values - for testing dStruct behavior
 struct node* initializeList(){	
 	struct node* list = NULL;
-	list = push(list, 1, 3, 2, 1.2, 10.903);
-	list = push(list, 2, 2, 4, 2.1, 32.490);
-	list = push(list, 3, 0, 7, 0.03, 3.2930);
-	list = push(list, 4, 1, 4, 4.5, 1.3849);
-	list = push(list, 5, 1, 8, 2.3, 449.2492);
-	list = push(list, 6, 4, 0, 7.2, 2.482902);
+	list = push(list, 1, 3, 2, 1.2, 10.903, 2);
+	list = push(list, 2, 2, 4, 2.1, 32.490, 4);
+	list = push(list, 3, 0, 7, 0.03, 3.2930, 7);
+	list = push(list, 4, 1, 4, 4.5, 1.3849, 4);
+	list = push(list, 5, 1, 8, 2.3, 449.2492, 8);
+	list = push(list, 6, 4, 0, 7.2, 2.482902, 0);
 	return list;
 }
 

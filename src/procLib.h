@@ -26,7 +26,7 @@ struct node* processExit(struct node* running_queue);
  * Appends current status of process as a new log entry to a file located in the log directory 
  */
 
-void addLogEntry(struct node* ready_queue, struct node* running_queue, double time, char* filename);
+void addLogEntry(struct node** ready_queue, struct node* running_queue, double time, char* filename, int size);
 
 /*
  * Pop from ready queue according to algorithm
@@ -42,6 +42,11 @@ void rotate(struct node** ready_queue, struct node** running_queue);
  * MLFQ - Checks if current priority queue has no processes left runs next highest priority queue
  */
 int check_queues(struct node** queue_array, int a, int size);
+
+/**
+ * MLFQ - Place all processes back to their original queue
+ */
+void reset_queues(struct node** queue_array);
 
 // Scheduling Algorithm Definitions
 	#define ALGOR ALGOR_FIFO

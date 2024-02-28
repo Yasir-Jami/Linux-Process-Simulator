@@ -75,19 +75,18 @@ void rotate(struct node** ready_queue, struct node** running_queue){
 	append(ready_queue, &process);
 }
 
-void addLogEntry(struct node** ready_queue_array, struct node* running_queue, double current_time, char* filename){
+void addLogEntry(struct node** ready_queue_array, struct node* running_queue, double current_time, char* filename, int size){
 	FILE *fp = NULL;
-	int i = 0;
-	int size = sizeof(ready_queue_array)/sizeof(ready_queue_array[0]);
+	int i = 0;	
 
 	// Append log entry to logfile
 	fp = fopen(filename, "a");
 	// Ready Queue
-	while (ready_queue_array < size){
+	while (i < size){
 		while (ready_queue_array[i] != NULL){
-			fprintf(fp, "%f, %d, %d, %d, %f, %f\n", current_time, ready_queue->pid, ready_queue->status, 
-					ready_queue->niceness, ready_queue->cputime, ready_queue->proctime);
-			ready_queue = ready_queue->next;
+			fprintf(fp, "%f, %d, %d, %d, %f, %f\n", current_time, ready_queue_array[i]->pid, ready_queue_array[i]->status, 
+					ready_queue_array[i]->niceness, ready_queue_array[i]->cputime, ready_queue_array[i]->proctime);
+			ready_queue_array[i] = ready_queue_array[i]->next;
 		}
 		i++;
 	}
@@ -131,6 +130,7 @@ int check_queues(struct node** queue_array, int priority, int size){
 			return priority--;
 		}
 	}
+	return priority;
 }
 
 void reset_queues(struct node** queue_array){	
@@ -142,8 +142,8 @@ void reset_queues(struct node** queue_array){
 		current_queue = queue_array[i];
 		while (current_queue != NULL){
 			if (current_queue->niceness != current_queue->original_niceness){
-				process = pop(current_queue);
-				queue_array[5 - original_niceness] = push(queue_array[5 - original_niceness], process->pid, process->status, 
+				process = pop(&current_queue);
+				queue_array[5 - process->original_niceness] = push(queue_array[5 - process->original_niceness], process->pid, process->status, 
 						process->original_niceness, process->cputime, process->proctime, process->original_niceness);
 				free(process);
 				process = NULL; // watchpoint here

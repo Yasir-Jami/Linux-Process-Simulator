@@ -1,5 +1,7 @@
+#include <stdio.h>
+
 int main(void){
-	
+/*	
 	struct node* queue_array[5];
 
 	void reset_queues(struct node** queue_array){	
@@ -20,4 +22,16 @@ int main(void){
 			}
 		}
 	}
+
+	*/
+
+	int arr[4];
+	arr[0] = 1;
+
+	int size = sizeof(arr)/sizeof(arr[0]);
+
+	printf("Size of array: %d\n", size);
+
+
+
 }
