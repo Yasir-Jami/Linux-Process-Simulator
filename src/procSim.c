@@ -18,14 +18,15 @@ Name: Yasir Jami & Cole Doris
 
 int main(int argc, char* argv[]){
 	// Queues
-	struct node* ready_queue = NULL; // Holds processes ready to run
-	struct node* running_queue = NULL; // Holds processes that are running - niceness 5 queue for MLFQ 
-	// 4 niceness queues for MLFQ - lowest priority to highest 1-5
+	struct node* ready_queue = NULL; // Holds processes ready to run - niceness 5 queue for MLFQ 
+	struct node* running_queue = NULL; // Holds processes that are running
+	// 4 niceness queues for MLFQ
 	int priority = 5; // Determines priority queue to run
 	struct node* niceness4_queue = NULL;
         struct node* niceness3_queue = NULL;
         struct node* niceness2_queue = NULL;
         struct node* niceness1_queue = NULL;
+	int i = 0; // Used for loops related to MLFQ
 	// Timing
 	double timer = 0.0; // Global timer
 	double time_dt = TIME_DT; // Time increment
@@ -73,7 +74,7 @@ int main(int argc, char* argv[]){
 
 	// Add processes according to their niceness
 	if (strcmp(algorithm, "ALGOR_MLFQ") == 0){
-                struct node* ready_queue_array[5];
+                struct node* queue_array[5];
 		struct node* process = NULL;
                 struct node* temp = ready_queue;
                 while (temp != NULL){
@@ -102,20 +103,38 @@ int main(int argc, char* argv[]){
 		queue_array[2] = niceness2_queue;
 		queue_array[3] = niceness3_queue;
 		queue_array[4] = niceness4_queue;
+
+		// Start at first non-empty queue
+		int i = 0;
+		while (i < 5){
+			if ((running_queue = queue_array[i]) != NULL){
+				break;
+			}
+			i++;
+		}
 	}
-	else{
-		struct node* ready_queue_array[1];
+	
+	else {
+		struct node* queue_array[1];
 		queue_array[0] = ready_queue;
-	}
+	}	
+	
+	addLogEntry(queue_array, running_queue, timer, filename);
 
-	addLogEntry(ready_queue_array, running_queue, timer, filename);
-
-	// Add processes to running queue while all queues are not equal to null
-	while (ready_queue){
-		// Add process to running queue according to algorithm used, remove process from ready queue
-		running_queue = popFromReadyQueue(&ready_queue, algorithm);
+	// Add processes to running queue while there are still processes in queues 
+	while (ready_queue || niceness1_queue || niceness2_queue || niceness3_queue || niceness4_queue){
+		// Add process to running queue according to algorithm used
+		if (strcmp(algorithm, "ALGOR_MLFQ") == 0){
+			while (running_queue == NULL){
+				running_queue = queue_array[5 - priority + i];
+			}	
+		}
+		else {
+			running_queue = popFromReadyQueue(&ready_queue, algorithm);
+		}
+		
 		running_queue->status = 2;
-		printf("Dispatching process with PID %d to running queue...\n", running_queue->pid);
+		printf("Running process with PID %d...\n", running_queue->pid);
 		timer+=time_dt;
 		addLogEntry(queue_array, running_queue, timer, filename);
 		elapsed = 0.1;
@@ -131,10 +150,17 @@ int main(int argc, char* argv[]){
 				elapsed+=time_dt;
 				reset_timer+=time_dt;
 				time_reset+=time_dt;
-				if (time_reset > reset_timer){
-					printf("Time to reset");
-					//reset_queues(queue_array); // Return all processes to their original queues 
-				}	
+				if (time_reset > reset_timer){	
+					running_queue->status = 1;
+					reset_queues(queue_array); // Return all processes to their original queues
+					priority = 5;
+					while (queue_array[5 - priority] == NULL){	
+							priority--;
+					}
+
+					running_queue = queue_array[5 - priority]; // Start back at highest niceness queue
+					elasped = 0.1; 
+				}
 				// Move process to lower priority queue
 				if (elapsed > time_qt){
 					switch(priority){
@@ -181,9 +207,18 @@ int main(int argc, char* argv[]){
 		// Note that process has finished and make a log entry
 		running_queue->status = 3;
 		printf("Process with PID %d ran for %f seconds.\n", running_queue->pid, running_queue->cputime);
-		addLogEntry(ready_queue, running_queue, timer, filename);	
-		free(running_queue);
-		running_queue = NULL;
+		addLogEntry(ready_queue, running_queue, timer, filename);
+		
+		// No more processes left in queue
+		if (running_queue->next == NULL){
+			free(running_queue);
+			running_queue = NULL;
+		}
+		else{
+			process = pop(running_queue);
+			free(process);
+			process = NULL;
+		}
 	}
 	printf("Total time taken: %f\n", timer);
 
