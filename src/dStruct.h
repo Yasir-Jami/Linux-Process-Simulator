@@ -10,13 +10,14 @@ struct node {
 	int niceness;
 	double cputime;
 	double proctime;
+	int original_niceness;
 	struct node* next;
 };
 
 struct node* initializeList();
 
 /* Data Structure (linked list) Operations */
-struct node* push(struct node*, int, int, int, double, double);
+struct node* push(struct node*, int pid, int status, int nicenes, double cputime, double proctime, int original_niceness);
 
 struct node* append(struct node** target, struct node** src);
 

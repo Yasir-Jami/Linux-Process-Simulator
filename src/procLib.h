@@ -38,10 +38,16 @@ struct node* popFromReadyQueue(struct node** ready_queue, char* algorithm);
  */
 void rotate(struct node** ready_queue, struct node** running_queue);
 
+/**
+ * MLFQ - Checks if current priority queue has no processes left runs next highest priority queue
+ */
+int check_queues(struct node** queue_array, int a, int size);
+
 // Scheduling Algorithm Definitions
 	#define ALGOR ALGOR_FIFO
 	#define TIME_DT 0.1 // Increment timer by this amount each cycle
 	#define TIME_JIFFY 1.0 // Time slice at which process rotates out of running queue 
+	#define TIME_RESET 10.0 // Time at which all processes reset to their original niceness
 
 // Macros
 	#define str(s) #s

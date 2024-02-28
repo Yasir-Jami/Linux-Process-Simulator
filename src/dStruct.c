@@ -3,7 +3,7 @@
 #include <stdbool.h>
 #include "dStruct.h"
 
-struct node* push(struct node* head, int _pid, int _status, int _niceness, double _cputime, double _proctime) {
+struct node* push(struct node* head, int _pid, int _status, int _niceness, double _cputime, double _proctime, int original_niceness) {
 	struct node* newNode;
 	if ((newNode = malloc(sizeof(struct node)))==NULL) {
 		exit(EXIT_FAILURE);
@@ -13,6 +13,7 @@ struct node* push(struct node* head, int _pid, int _status, int _niceness, doubl
 	newNode->niceness = _niceness;
 	newNode->cputime = _cputime;
 	newNode->proctime = _proctime;
+	newNode->original_niceness = _niceness;
 
 	newNode->next=head;
 	return(newNode);
@@ -35,6 +36,7 @@ struct node* append(struct node** head, struct node** nodeToPush){
 	end_node->niceness = (*nodeToPush)->niceness;
 	end_node->cputime = (*nodeToPush)->cputime;
 	end_node->proctime = (*nodeToPush)->proctime;
+	end_node->original_niceness = (*nodeToPush)->niceness;
 
 	struct node* temp = *head;
 	while (temp->next != NULL){
@@ -61,7 +63,7 @@ struct node* pop(struct node** head){
 	}
 
 	struct node* temp = NULL;
-	temp = push(temp, (*head)->pid, (*head)->status, (*head)->niceness, (*head)->cputime, (*head)->proctime);
+	temp = push(temp, (*head)->pid, (*head)->status, (*head)->niceness, (*head)->cputime, (*head)->proctime, (*head)->niceness);
 	if ((*head)->next == NULL){
 		free(*head);
 		*head = NULL;

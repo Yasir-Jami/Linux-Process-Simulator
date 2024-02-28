@@ -61,7 +61,7 @@ struct node* admit(struct node* ready_queue)
 
 		// After reading from file, make a new process and add to ready queue
 		printf("Adding process %s to ready queue with PID %d...\n", file->d_name, file_count);	
-		ready_queue = push(ready_queue, file_count, 1, niceness, 0.0, proctime);	
+		ready_queue = push(ready_queue, file_count, 1, niceness, 0.0, proctime, niceness);
 		file_count++;
 	}
 	closedir(processDir);
@@ -75,18 +75,23 @@ void rotate(struct node** ready_queue, struct node** running_queue){
 	append(ready_queue, &process);
 }
 
-void addLogEntry(struct node* ready_queue, struct node* running_queue, double current_time, char* filename){
+void addLogEntry(struct node** ready_queue_array, struct node* running_queue, double current_time, char* filename){
 	FILE *fp = NULL;
+	int i = 0;
+	int size = sizeof(ready_queue_array)/sizeof(ready_queue_array[0]);
 
 	// Append log entry to logfile
 	fp = fopen(filename, "a");
 	// Ready Queue
-	while (ready_queue != NULL){
-		fprintf(fp, "%f, %d, %d, %d, %f, %f\n", current_time, ready_queue->pid, ready_queue->status, 
-				ready_queue->niceness, ready_queue->cputime, ready_queue->proctime);
-		ready_queue = ready_queue->next;
+	while (ready_queue_array < size){
+		while (ready_queue_array[i] != NULL){
+			fprintf(fp, "%f, %d, %d, %d, %f, %f\n", current_time, ready_queue->pid, ready_queue->status, 
+					ready_queue->niceness, ready_queue->cputime, ready_queue->proctime);
+			ready_queue = ready_queue->next;
+		}
+		i++;
 	}
-	// Running Queue - loop used in case we have multiple processes later 
+	// Running Queue
 	while (running_queue != NULL){
 	fprintf(fp, "%f, %d, %d, %d, %f, %f\n", current_time, running_queue->pid, running_queue->status, 
 			running_queue->niceness, running_queue->cputime, running_queue->proctime);
@@ -118,3 +123,13 @@ struct node* popFromReadyQueue(struct node** ready_queue, char* algorithm){
 	// RR and MLFQ - Pop normally
 	return pop(ready_queue);
 }
+
+int check_queues(struct node** queue_array, int priority, int size){
+	int i = priority;
+	while (i < size){
+		if (queue_array[i] == NULL){
+			return priority--;
+		}
+	}
+}
+
