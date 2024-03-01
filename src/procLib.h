@@ -41,7 +41,7 @@ void rotate(struct node** ready_queue, struct node** running_queue);
 /**
  * MLFQ - Checks if current priority queue has no processes left runs next highest priority queue
  */
-int check_queues(struct node** queue_array, int a, int size);
+int check_queues(struct node** queue_array, int size);
 
 /**
  * MLFQ - Place all processes back to their original queue

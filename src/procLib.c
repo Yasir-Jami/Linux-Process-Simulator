@@ -95,7 +95,7 @@ void addLogEntry(struct node** queue_array, struct node* running_queue, double c
 		i++;
 	}
 
-	if (strcmp(algorithm, "ALGOR_MLFQ") != 0){
+	if (strcmp(algorithm, "ALGOR_MLFQ") != 0 && running_queue){
 		// Running Queue
 		fprintf(fp, "%f, %d, %d, %d, %f, %f\n", current_time, running_queue->pid, running_queue->status, 
 				running_queue->niceness, running_queue->cputime, running_queue->proctime);
@@ -128,12 +128,13 @@ struct node* popFromReadyQueue(struct node** ready_queue, char* algorithm){
 	return pop(ready_queue);
 }
 
-int check_queues(struct node** queue_array, int priority, int size){
-	int i = priority;
-	while (i < size){
-		if (queue_array[i] == NULL){
-			return priority--;
-		}
+int check_queues(struct node** queue_array, int size){
+	int i = 0;
+	int priority = size;
+
+	while (queue_array[i] == NULL){
+		priority--;
+		i++;
 	}
 	return priority;
 }
@@ -151,8 +152,9 @@ void reset_queues(struct node** queue_array){
 				queue_array[5 - process->original_niceness] = push(queue_array[5 - process->original_niceness], process->pid, process->status, 
 						process->original_niceness, process->cputime, process->proctime, process->original_niceness);
 				free(process);
-				process = NULL; // watchpoint here
+				process = NULL;
 			}
+			current_queue = current_queue->next;
 		}
 	}
 }

@@ -145,18 +145,15 @@ int main(int argc, char* argv[]){
 	while (exit_flag){
 		// Add process to running queue according to algorithm used	
 		if (strcmp(algorithm, "ALGOR_MLFQ") == 0){
-			i = 0;
-			do {
-				running_queue = queue_array[5 - priority + i];
-				i++;
-			}
-			while (running_queue == NULL);
+			priority = check_queues(queue_array, size);
+			running_queue = queue_array[5 - priority];
+			i++;
 		}
 		else {
 			running_queue = popFromReadyQueue(&queue_array[0], algorithm);
-		}	
+		}
 
-		running_queue->status = 2;	
+		running_queue->status = 2;
 		printf("Running process with PID %d...\n", running_queue->pid);
 		timer+=time_dt;	
 		addLogEntry(queue_array, running_queue, timer, filename, size);
@@ -166,55 +163,65 @@ int main(int argc, char* argv[]){
 		while (getCpuTime(running_queue, running_queue->pid) <= running_queue->proctime){
 			// Increment global time and add a new log entry for every process in both queues
 			timer+=time_dt;
-			running_queue->cputime+=time_dt;	
-			addLogEntry(queue_array, running_queue, timer, filename, size);	
+			running_queue->cputime+=time_dt;
+			addLogEntry(queue_array, running_queue, timer, filename, size);
 
 			if ((strcmp(algorithm, "ALGOR_MLFQ") == 0)){
 				// Increment timers
 				elapsed+=time_dt;
-				reset_timer+=time_dt;
-				time_reset+=time_dt;
+				reset_timer+=time_dt;	
 				// Check if it's time to reset queues
-				if (time_reset > reset_timer){
+				if (reset_timer > time_reset){
 					running_queue->status = 1;
 					reset_queues(queue_array); // Return all processes to their original queues
-					priority = 5;
-					while (queue_array[5 - priority] == NULL){
-							priority--;
-					}
+					priority = check_queues(queue_array, size);
 					running_queue = queue_array[5 - priority]; // Start back at highest niceness queue
 					reset_timer = 0.1;
 					elapsed = 0.1; 
 				}
+			
 				// Move process to lower priority queue
-				if (elapsed > time_qt){
+				if (elapsed > time_qt){	
+					running_queue->status = 1;
 					switch(priority){
-						// Check if we can do append(queueToPopTo, pop(queue)) so temp can be omitted entirely
-						case 5: setNiceness(ready_queue, ready_queue->pid, (ready_queue->niceness)-1);
-							temp = popAtPid(&ready_queue, ready_queue->pid);
+						case 5: setNiceness(running_queue, running_queue->pid, priority);	
+							temp = pop(&running_queue);
 							append(&niceness4_queue, &temp);
 							break;
-						case 4: setNiceness(niceness4_queue, niceness4_queue->pid, (niceness4_queue->niceness)-1);
-							temp = popAtPid(&niceness4_queue, niceness4_queue->pid);
-							append(&niceness4_queue, &temp);
+						case 4: setNiceness(running_queue, running_queue->pid, priority);
+							temp = pop(&running_queue);
+							append(&niceness3_queue, &temp);
 							break;
-						case 3: setNiceness(niceness3_queue, niceness3_queue->pid, (niceness3_queue->niceness)-1);
-							temp = popAtPid(&niceness3_queue, niceness3_queue->pid);
+						case 3: setNiceness(running_queue, running_queue->pid, priority);
+							temp = pop(&running_queue);
 							append(&niceness2_queue, &temp);
 							break;
 				
-						case 2: setNiceness(niceness2_queue, niceness2_queue->pid, (niceness2_queue->niceness)-1);
-							temp = popAtPid(&niceness2_queue, niceness2_queue->pid);
+						case 2: setNiceness(running_queue, running_queue->pid, priority);
+							temp = pop(&running_queue);
 							append(&niceness1_queue, &temp);
 							break;
 
-						case 1: setNiceness(niceness1_queue, niceness1_queue->pid, (niceness1_queue->niceness)-1);
-							temp = popAtPid(&niceness1_queue, niceness1_queue->pid); // Push process to back at lowest queue
+						case 1: setNiceness(running_queue, running_queue->pid, 1);
+							temp = pop(&running_queue);
+							append(&niceness1_queue, &temp);
+							break;
+						default:
+							setNiceness(running_queue, running_queue->pid, 1);
+							temp = pop(&running_queue);
 							append(&niceness1_queue, &temp);
 							break;
 					}
+					if (running_queue == NULL){
+						temp = pop(&queue_array[5 - priority]);
+						priority = check_queues(queue_array, size);
+						running_queue = queue_array[priority];
+						running_queue->status = 2;
+					}
+					else{
+						running_queue->status = 2;
+					}
 					elapsed = 0.1;
-					priority = check_queues(queue_array, priority, size); // Check highest queue and change currently running queue accordingly 
 				}
 			}
 
@@ -235,7 +242,7 @@ int main(int argc, char* argv[]){
 		addLogEntry(queue_array, running_queue, timer, filename, size);
 	
 		// When all queues are empty, exit simulator
-		if (strcmp(algorithm, "ALGOR_MLFQ") == 0){
+		if (strcmp(algorithm, "ALGOR_MLFQ") == 0){	
 			if (!(queue_array[0] && queue_array[1] && queue_array[2] && queue_array[3] && queue_array[4])){
 				exit_flag = 0;
 			}
@@ -243,17 +250,11 @@ int main(int argc, char* argv[]){
 		else if (queue_array[0] == NULL){
 			exit_flag = 0;
 		}
-		
-		// No more processes left in queue
-		if (running_queue->next == NULL){
-			free(running_queue);
-			running_queue = NULL;
-		}
-		else {
-			temp = pop(&running_queue);
-			free(temp);
-			temp = NULL;
-		}
+
+		temp = pop(&running_queue);
+		free(temp);
+		temp = NULL;
+
 	}	
 	printf("Total time taken: %f\n", timer);
 	return 0;
