@@ -49,7 +49,7 @@ struct node* append(struct node** head, struct node** nodeToPush){
 }
 
 bool isEmpty(struct node* list){
-	if ((list == NULL) || (list->pid == -1)){
+	if ((list == NULL)){
 		printf("List is empty!\n");
 		return true;
 	}

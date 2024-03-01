@@ -75,27 +75,32 @@ void rotate(struct node** ready_queue, struct node** running_queue){
 	append(ready_queue, &process);
 }
 
-void addLogEntry(struct node** ready_queue_array, struct node* running_queue, double current_time, char* filename, int size){
+void addLogEntry(struct node** queue_array, struct node* running_queue, double current_time, char* filename, int size){
 	FILE *fp = NULL;
-	int i = 0;	
+	char* algorithm = xstr(ALGOR);
+	int i = 0;
+	struct node* temp = NULL;
 
 	// Append log entry to logfile
 	fp = fopen(filename, "a");
-	// Ready Queue
+
+	// Ready Queue	
 	while (i < size){
-		while (ready_queue_array[i] != NULL){
-			fprintf(fp, "%f, %d, %d, %d, %f, %f\n", current_time, ready_queue_array[i]->pid, ready_queue_array[i]->status, 
-					ready_queue_array[i]->niceness, ready_queue_array[i]->cputime, ready_queue_array[i]->proctime);
-			ready_queue_array[i] = ready_queue_array[i]->next;
+		temp = queue_array[i];
+		while (temp != NULL){	
+			fprintf(fp, "%f, %d, %d, %d, %f, %f\n", current_time, temp->pid, temp->status, 
+					temp->niceness, temp->cputime, temp->proctime);		
+			temp = temp->next;
 		}
 		i++;
 	}
-	// Running Queue
-	while (running_queue != NULL){
-	fprintf(fp, "%f, %d, %d, %d, %f, %f\n", current_time, running_queue->pid, running_queue->status, 
-			running_queue->niceness, running_queue->cputime, running_queue->proctime);
-			running_queue = running_queue->next;	
-		}
+
+	if (strcmp(algorithm, "ALGOR_MLFQ") != 0){
+		// Running Queue
+		fprintf(fp, "%f, %d, %d, %d, %f, %f\n", current_time, running_queue->pid, running_queue->status, 
+				running_queue->niceness, running_queue->cputime, running_queue->proctime);
+	}
+
 	fclose(fp);
 }
 

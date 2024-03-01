@@ -49,7 +49,7 @@ int check_queues(struct node** queue_array, int a, int size);
 void reset_queues(struct node** queue_array);
 
 // Scheduling Algorithm Definitions
-	#define ALGOR ALGOR_FIFO
+	#define ALGOR ALGOR_MLFQ
 	#define TIME_DT 0.1 // Increment timer by this amount each cycle
 	#define TIME_JIFFY 1.0 // Time slice at which process rotates out of running queue 
 	#define TIME_RESET 10.0 // Time at which all processes reset to their original niceness

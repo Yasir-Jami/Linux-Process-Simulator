@@ -1,6 +1,6 @@
 /*
 Name: Yasir Jami & Cole Doris
-360 Lab 5 (Group 4)
+360 Lab 6 (Group 4)
 */
 // Pre-processor directives will be defined in procLib.h, so they can be used in procLib.c and procSim.c
 
@@ -18,16 +18,18 @@ Name: Yasir Jami & Cole Doris
 
 int main(int argc, char* argv[]){
 	// Queues
-	struct node* ready_queue = NULL; // Holds processes ready to run - niceness 5 queue for MLFQ 
+	struct node* ready_queue = NULL; // Holds processes ready to run
 	struct node* running_queue = NULL; // Holds processes that are running
 	struct node* temp = NULL; // Temporarily holds processes
+	int exit_flag = 1; // Determines process loop state
 	// 4 niceness queues for MLFQ
 	int priority = 5; // Determines priority queue to run
 	int array_size = 0; // Determines queue array size
+	struct node* niceness5_queue = NULL;
 	struct node* niceness4_queue = NULL;
         struct node* niceness3_queue = NULL;
         struct node* niceness2_queue = NULL;
-        struct node* niceness1_queue = NULL;	
+        struct node* niceness1_queue = NULL;
 	// Timing
 	double timer = 0.0; // Global timer
 	double time_dt = TIME_DT; // Time increment
@@ -39,15 +41,17 @@ int main(int argc, char* argv[]){
 	// For use in the script 
 	char algorithm[24] = xstr(ALGOR); // Scheduling Algorithm - macro found in procLib.h
 	if (argc > 1) {
-		if (!strcmp(argv[1], "0")) {
-			strcpy(algorithm, "ALGOR_FIFO");
-		} else if (!strcmp(argv[1], "1")) {
-			strcpy(algorithm, "ALGOR_SJF");
-		} else if (!strcmp(argv[1], "2")) {
-			strcpy(algorithm, "ALGOR_RR");
-		} else if (!strcmp(argv[1], "3")) {
-			strcpy(algorithm, "ALGOR_MLFQ");
+                if (!strcmp(argv[1], "0")) {
+                        strcpy(algorithm, "ALGOR_FIFO");
+                } else if (!strcmp(argv[1], "1")) {
+                        strcpy(algorithm, "ALGOR_SJF");
+                } else if (!strcmp(argv[1], "2")) {
+                        strcpy(algorithm, "ALGOR_RR");
+                } else if (!strcmp(argv[1], "3")) {
+                        strcpy(algorithm, "ALGOR_MLFQ");
+        	}
 	}
+	
 	// Create logfile
 	FILE* fp = NULL;
 	char filename[100] = "";
@@ -82,37 +86,43 @@ int main(int argc, char* argv[]){
 	// Increment time by (time_delta * # of processes)
 	printf("\n");
 
-	// Add processes according to their niceness
+	// Add processes to queues according to their niceness
 	if (strcmp(algorithm, "ALGOR_MLFQ") == 0){
                 int i = 0; // Used for loops related to MLFQ	
 		struct node* process = NULL;
-                struct node* temp = ready_queue;
-                while (temp != NULL){
-                        switch(temp->niceness){
-                                case 1: process = popAtPid(&ready_queue, ready_queue->pid);
-                                        niceness1_queue = push(process, process->pid, process->status, 
+                while (ready_queue != NULL){	
+                        switch(ready_queue->niceness){
+                                case 1: process = pop(&ready_queue);
+					niceness1_queue = push(niceness1_queue, process->pid, process->status, 
+							process->niceness, process->cputime, process->proctime, process->niceness); 
+					break;
+                                case 2: process = pop(&ready_queue);
+					niceness2_queue = push(niceness2_queue, process->pid, process->status,
 							process->niceness, process->cputime, process->proctime, process->niceness);
-                                        break;
-                                case 2: process = popAtPid(&ready_queue, ready_queue->pid);
-                                        niceness2_queue = push(process, process->pid, process->status,
-							process->niceness, process->cputime, process->proctime, process->niceness);
-                                        break;
-                                case 3: process = popAtPid(&ready_queue, ready_queue->pid); 
-                                        niceness3_queue = push(process, process->pid, process->status, 
+					break;
+                                case 3: process = pop(&ready_queue);
+					niceness3_queue = push(niceness3_queue, process->pid, process->status, 
 							process->niceness, process->cputime, process->proctime, process->niceness); 
 				       	break;
-                                case 4: process = popAtPid(&ready_queue, ready_queue->pid);
-                                        niceness4_queue = push(process, process->pid, process->status, 
+                                case 4:	process = pop(&ready_queue);
+					niceness4_queue = push(niceness4_queue, process->pid, process->status, 
 							process->niceness, process->cputime, process->proctime, process->niceness);
-                                        break;
-                        }
-                        temp = temp->next;
+					break;
+				case 5: process = pop(&ready_queue);
+					niceness5_queue = push(niceness5_queue, process->pid, process->status, 
+							process->niceness, process->cputime, process->proctime, process->niceness);
+					break;
+				default: process = pop(&ready_queue); 
+					niceness5_queue = push(niceness5_queue, process->pid, process->status, 
+							process->niceness, process->cputime, process->proctime, process->niceness);
+					break;
+			}
                 }
-       		queue_array[0] = ready_queue;
-		queue_array[1] = niceness1_queue;
-		queue_array[2] = niceness2_queue;
-		queue_array[3] = niceness3_queue;
-		queue_array[4] = niceness4_queue;
+       		queue_array[0] = niceness5_queue;
+		queue_array[1] = niceness4_queue;
+		queue_array[2] = niceness3_queue;
+		queue_array[3] = niceness2_queue;
+		queue_array[4] = niceness1_queue; 
 	
 		// Start at first non-empty queue
 		i = 0;
@@ -126,15 +136,14 @@ int main(int argc, char* argv[]){
 	
 	else {
 		queue_array[0] = ready_queue;
-	}	
-	
-	int size = sizeof(queue_array)/sizeof(queue_array[0]); // Size of a process/struct pointer
+	}		
+
+	int size = sizeof(queue_array)/sizeof(ready_queue); // Size of a process/struct pointer
 	addLogEntry(queue_array, running_queue, timer, filename, size);
 
 	// Add processes to running queue while there are still processes in queues
-	// Maybe set condition "when queue array isn't empty"
-	while (ready_queue || niceness1_queue || niceness2_queue || niceness3_queue || niceness4_queue){
-		// Add process to running queue according to algorithm used
+	while (exit_flag){
+		// Add process to running queue according to algorithm used	
 		if (strcmp(algorithm, "ALGOR_MLFQ") == 0){
 			i = 0;
 			do {
@@ -144,12 +153,12 @@ int main(int argc, char* argv[]){
 			while (running_queue == NULL);
 		}
 		else {
-			queue_array[0] = popFromReadyQueue(&ready_queue, algorithm);
-		}
-		
-		running_queue->status = 2;
+			running_queue = popFromReadyQueue(&queue_array[0], algorithm);
+		}	
+
+		running_queue->status = 2;	
 		printf("Running process with PID %d...\n", running_queue->pid);
-		timer+=time_dt;
+		timer+=time_dt;	
 		addLogEntry(queue_array, running_queue, timer, filename, size);
 		elapsed = 0.1;
 
@@ -157,8 +166,8 @@ int main(int argc, char* argv[]){
 		while (getCpuTime(running_queue, running_queue->pid) <= running_queue->proctime){
 			// Increment global time and add a new log entry for every process in both queues
 			timer+=time_dt;
-			running_queue->cputime+=time_dt;
-			addLogEntry(queue_array, running_queue, timer, filename, size);
+			running_queue->cputime+=time_dt;	
+			addLogEntry(queue_array, running_queue, timer, filename, size);	
 
 			if ((strcmp(algorithm, "ALGOR_MLFQ") == 0)){
 				// Increment timers
@@ -166,14 +175,15 @@ int main(int argc, char* argv[]){
 				reset_timer+=time_dt;
 				time_reset+=time_dt;
 				// Check if it's time to reset queues
-				if (time_reset > reset_timer){	
+				if (time_reset > reset_timer){
 					running_queue->status = 1;
 					reset_queues(queue_array); // Return all processes to their original queues
 					priority = 5;
-					while (queue_array[5 - priority] == NULL){	
+					while (queue_array[5 - priority] == NULL){
 							priority--;
 					}
 					running_queue = queue_array[5 - priority]; // Start back at highest niceness queue
+					reset_timer = 0.1;
 					elapsed = 0.1; 
 				}
 				// Move process to lower priority queue
@@ -223,6 +233,16 @@ int main(int argc, char* argv[]){
 		running_queue->status = 3;
 		printf("Process with PID %d ran for %f seconds.\n", running_queue->pid, running_queue->cputime);
 		addLogEntry(queue_array, running_queue, timer, filename, size);
+	
+		// When all queues are empty, exit simulator
+		if (strcmp(algorithm, "ALGOR_MLFQ") == 0){
+			if (!(queue_array[0] && queue_array[1] && queue_array[2] && queue_array[3] && queue_array[4])){
+				exit_flag = 0;
+			}
+		}
+		else if (queue_array[0] == NULL){
+			exit_flag = 0;
+		}
 		
 		// No more processes left in queue
 		if (running_queue->next == NULL){
@@ -233,9 +253,8 @@ int main(int argc, char* argv[]){
 			temp = pop(&running_queue);
 			free(temp);
 			temp = NULL;
-		}	
-	}
-	}
+		}
+	}	
 	printf("Total time taken: %f\n", timer);
 	return 0;
 }
