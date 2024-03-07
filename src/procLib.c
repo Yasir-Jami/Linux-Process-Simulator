@@ -194,7 +194,7 @@ void addToQueueArray(struct node** ready_queue, struct node* niceness5_queue, st
 
 // Switch to queue array instead of bringing every queue, more efficient
 struct node* lowerProcessPriority(struct node** running_queue, struct node** niceness5_queue, struct node** niceness4_queue, 
-				struct node** niceness3_queue, struct node** niceness2_queue, struct node** niceness1_queue, priority){
+				struct node** niceness3_queue, struct node** niceness2_queue, struct node** niceness1_queue, int priority){
 		switch(priority){
 				case 5: setNiceness(running_queue, running_queue->pid, priority);	
 					temp = pop(&running_queue);

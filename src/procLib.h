@@ -59,7 +59,7 @@ void addToQueueArray(struct node** ready_queue, struct node* niceness5_queue, st
  * MLFQ - Lower process niceness and move it to its new niceneess queue
  */
 struct node* lowerProcessPriority(struct node** running_queue, struct node** niceness5_queue, struct node** niceness4_queue, 
-				struct node** niceness3_queue, struct node** niceness2_queue, struct node** niceness1_queue, priority)
+				struct node** niceness3_queue, struct node** niceness2_queue, struct node** niceness1_queue, int priority)
 
 // Scheduling Algorithm Definitions
 	#define ALGOR ALGOR_MLFQ
