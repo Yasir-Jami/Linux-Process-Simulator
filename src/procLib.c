@@ -107,7 +107,7 @@ void addLogEntry(struct node** queue_array, struct node* running_queue, double c
 // Pop according to the scheduling algorithm used
 struct node* popFromReadyQueue(struct node** ready_queue, char* algorithm){
 	// SJF - Get PID of the process with the lowest proctime
-	if (strcmp(algorithm, "ALGOR_SJF") == 0){	
+	if (strcmp(algorithm, "ALGOR_SJF") == 0){
 		struct node* temp = *ready_queue;
 		double lowest_time = 500.0;
 		int pid = 0;
@@ -157,4 +157,71 @@ void reset_queues(struct node** queue_array){
 			current_queue = current_queue->next;
 		}
 	}
+}
+
+void addToQueueArray(struct node** ready_queue, struct node* niceness5_queue, struct node** niceness4_queue, 
+		struct node** niceness3_queue, struct node** niceness2_queue, struct node** niceness1_queue){
+	int i = 0;
+	while (ready_queue != NULL){	
+		switch(ready_queue->niceness){
+			case 1: process = pop(&ready_queue);
+					niceness1_queue = push(niceness1_queue, process->pid, process->status, 
+							process->niceness, process->cputime, process->proctime, process->niceness); 
+					break;
+                                case 2: process = pop(&ready_queue);
+					niceness2_queue = push(niceness2_queue, process->pid, process->status,
+							process->niceness, process->cputime, process->proctime, process->niceness);
+					break;
+                                case 3: process = pop(&ready_queue);
+					niceness3_queue = push(niceness3_queue, process->pid, process->status, 
+							process->niceness, process->cputime, process->proctime, process->niceness); 
+				       	break;
+                                case 4:	process = pop(&ready_queue);
+					niceness4_queue = push(niceness4_queue, process->pid, process->status, 
+							process->niceness, process->cputime, process->proctime, process->niceness);
+					break;
+				case 5: process = pop(&ready_queue);
+					niceness5_queue = push(niceness5_queue, process->pid, process->status, 
+							process->niceness, process->cputime, process->proctime, process->niceness);
+					break;
+				default: process = pop(&ready_queue); 
+					niceness5_queue = push(niceness5_queue, process->pid, process->status, 
+							process->niceness, process->cputime, process->proctime, process->niceness);
+					break;
+			}
+                }
+}
+
+// Switch to queue array instead of bringing every queue, more efficient
+struct node* lowerProcessPriority(struct node** running_queue, struct node** niceness5_queue, struct node** niceness4_queue, 
+				struct node** niceness3_queue, struct node** niceness2_queue, struct node** niceness1_queue, priority){
+		switch(priority){
+				case 5: setNiceness(running_queue, running_queue->pid, priority);	
+					temp = pop(&running_queue);
+					append(&niceness4_queue, &temp);
+					break;
+				case 4: setNiceness(running_queue, running_queue->pid, priority);
+					temp = pop(&running_queue);
+					append(&niceness3_queue, &temp);
+					break;
+				case 3: setNiceness(running_queue, running_queue->pid, priority);
+					temp = pop(&running_queue);
+					append(&niceness2_queue, &temp);
+					break;
+				
+				case 2: setNiceness(running_queue, running_queue->pid, priority);
+					temp = pop(&running_queue);
+					append(&niceness1_queue, &temp);
+					break;
+
+				case 1: setNiceness(running_queue, running_queue->pid, 1);
+					temp = pop(&running_queue);
+					append(&niceness1_queue, &temp);
+					break;
+				default:
+					setNiceness(running_queue, running_queue->pid, 1);
+					temp = pop(&running_queue);
+					append(&niceness1_queue, &temp);
+					break;
+				}	
 }

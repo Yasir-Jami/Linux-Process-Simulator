@@ -48,6 +48,19 @@ int check_queues(struct node** queue_array, int size);
  */
 void reset_queues(struct node** queue_array);
 
+
+/**
+ * MLFQ - add all niceness queues to the array
+ */
+void addToQueueArray(struct node** ready_queue, struct node* niceness5_queue, struct node** niceness4_queue, 
+		struct node** niceness3_queue, struct node** niceness2_queue, struct node** niceness1_queue)
+
+/**
+ * MLFQ - Lower process niceness and move it to its new niceneess queue
+ */
+struct node* lowerProcessPriority(struct node** running_queue, struct node** niceness5_queue, struct node** niceness4_queue, 
+				struct node** niceness3_queue, struct node** niceness2_queue, struct node** niceness1_queue, priority)
+
 // Scheduling Algorithm Definitions
 	#define ALGOR ALGOR_MLFQ
 	#define TIME_DT 0.1 // Increment timer by this amount each cycle

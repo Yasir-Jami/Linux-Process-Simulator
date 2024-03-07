@@ -89,35 +89,8 @@ int main(int argc, char* argv[]){
 	// Add processes to queues according to their niceness
 	if (strcmp(algorithm, "ALGOR_MLFQ") == 0){
                 int i = 0; // Used for loops related to MLFQ	
-		struct node* process = NULL;
-                while (ready_queue != NULL){	
-                        switch(ready_queue->niceness){
-                                case 1: process = pop(&ready_queue);
-					niceness1_queue = push(niceness1_queue, process->pid, process->status, 
-							process->niceness, process->cputime, process->proctime, process->niceness); 
-					break;
-                                case 2: process = pop(&ready_queue);
-					niceness2_queue = push(niceness2_queue, process->pid, process->status,
-							process->niceness, process->cputime, process->proctime, process->niceness);
-					break;
-                                case 3: process = pop(&ready_queue);
-					niceness3_queue = push(niceness3_queue, process->pid, process->status, 
-							process->niceness, process->cputime, process->proctime, process->niceness); 
-				       	break;
-                                case 4:	process = pop(&ready_queue);
-					niceness4_queue = push(niceness4_queue, process->pid, process->status, 
-							process->niceness, process->cputime, process->proctime, process->niceness);
-					break;
-				case 5: process = pop(&ready_queue);
-					niceness5_queue = push(niceness5_queue, process->pid, process->status, 
-							process->niceness, process->cputime, process->proctime, process->niceness);
-					break;
-				default: process = pop(&ready_queue); 
-					niceness5_queue = push(niceness5_queue, process->pid, process->status, 
-							process->niceness, process->cputime, process->proctime, process->niceness);
-					break;
-			}
-                }
+		addToQueueArray(&ready_queue, &niceness5_queue, &niceness4_queue, &niceness3_queue, &niceness2_queue, &niceness1_queue);
+		struct node* process = NULL;  
        		queue_array[0] = niceness5_queue;
 		queue_array[1] = niceness4_queue;
 		queue_array[2] = niceness3_queue;
@@ -183,35 +156,9 @@ int main(int argc, char* argv[]){
 				// Move process to lower priority queue
 				if (elapsed > time_qt){	
 					running_queue->status = 1;
-					switch(priority){
-						case 5: setNiceness(running_queue, running_queue->pid, priority);	
-							temp = pop(&running_queue);
-							append(&niceness4_queue, &temp);
-							break;
-						case 4: setNiceness(running_queue, running_queue->pid, priority);
-							temp = pop(&running_queue);
-							append(&niceness3_queue, &temp);
-							break;
-						case 3: setNiceness(running_queue, running_queue->pid, priority);
-							temp = pop(&running_queue);
-							append(&niceness2_queue, &temp);
-							break;
-				
-						case 2: setNiceness(running_queue, running_queue->pid, priority);
-							temp = pop(&running_queue);
-							append(&niceness1_queue, &temp);
-							break;
-
-						case 1: setNiceness(running_queue, running_queue->pid, 1);
-							temp = pop(&running_queue);
-							append(&niceness1_queue, &temp);
-							break;
-						default:
-							setNiceness(running_queue, running_queue->pid, 1);
-							temp = pop(&running_queue);
-							append(&niceness1_queue, &temp);
-							break;
-					}
+					running_queue = lowerProcessPriority(&running_queue, &niceness5_queue, &niceness4_queue, 
+							&niceness3_queue, &niceness2_queue, &niceness1_queue, priority);
+					
 					if (running_queue == NULL){
 						temp = pop(&queue_array[5 - priority]);
 						priority = check_queues(queue_array, size);
@@ -242,12 +189,12 @@ int main(int argc, char* argv[]){
 		addLogEntry(queue_array, running_queue, timer, filename, size);
 	
 		// When all queues are empty, exit simulator
-		if (strcmp(algorithm, "ALGOR_MLFQ") == 0){	
+		if (strcmp(algorithm, "ALGOR_MLFQ") == 0){
 			if (!(queue_array[0] && queue_array[1] && queue_array[2] && queue_array[3] && queue_array[4])){
 				exit_flag = 0;
 			}
 		}
-		else if (queue_array[0] == NULL){
+		else if (strcmp(algorithm, "ALGOR_MLFQ")!=0 && queue_array[0] == NULL){
 			exit_flag = 0;
 		}
 
@@ -255,7 +202,7 @@ int main(int argc, char* argv[]){
 		free(temp);
 		temp = NULL;
 
-	}	
+	}
 	printf("Total time taken: %f\n", timer);
 	return 0;
 }
