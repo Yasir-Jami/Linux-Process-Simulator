@@ -19,9 +19,9 @@ closedir(DIR *) - closes a directory
 
 */
 
-
 //https://www.gnu.org/software/libc/manual/html_node/Getopt-Long-Option-Example.html	
-void parseCommands(char* type, char* name, char* user, int* maxdepth){	
+void parseCommands(int argc, char* argv[], char* type, char* name, char* user, int* maxdepth){	
+	/*
 	int verbose_flag;
 
 	// What do flags do?
@@ -76,7 +76,7 @@ void parseCommands(char* type, char* name, char* user, int* maxdepth){
 			case 'u':
 				printf("Owner of file: %s\n", optarg);
 				
-		
+	*/	
 	}
 // Checks -file filetype given a valid argument
 int getFileType(char c){	
