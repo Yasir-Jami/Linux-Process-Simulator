@@ -12,4 +12,4 @@ findme: main.o findme.o
 
 .PHONY: clean
 clean:
-	rm -f *.o readme
+	rm -f *.o findme

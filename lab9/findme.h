@@ -14,7 +14,7 @@
  * user: owner of the file
  * maxdepth: levels of directories to search through
  */
-void parseCommands(int argc, char* argv[], char* type, char* name, char* user, int* maxdepth);
+void parseCommands(int argc, char* argv[], char** type, char** name, char** user, int* maxdepth);
 
 /*
  * Takes a character as input and finds a file type to look for and returns it as an integer

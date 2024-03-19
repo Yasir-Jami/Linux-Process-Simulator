@@ -20,66 +20,71 @@ closedir(DIR *) - closes a directory
 */
 
 //https://www.gnu.org/software/libc/manual/html_node/Getopt-Long-Option-Example.html	
-void parseCommands(int argc, char* argv[], char* type, char* name, char* user, int* maxdepth){	
-	/*
-	int verbose_flag;
+void parseCommands(int argc, char* argv[], char** type, char** name, char** user, int* maxdepth){
+	int c;
+	int count = 0;
 
-	// What do flags do?
-	struct option long_options[] = 
-		{"type", required_argument, &verbose_flag, 0};
-		{"name", required_argument, &verbose_flag, 0};
-		{"user", required_argument, &verbose_flag, 0};
-		{"maxdepth", required_argument, &verbose_flag, 0};
-	}
-		
-	while ((opt = getopt(argc, argv, "tnum:")) != -1){
-		opt = getopt(argc, argv, "tnum:");	
+	while (1){
+	        int option_index = 0;
+		static struct option long_options[] = 
+		{
+			{"type", required_argument, NULL, 'n'},
+			{"name", required_argument, NULL, 't'},
+			{"user", required_argument, NULL, 'u'},
+			{"maxdepth", required_argument, NULL, 'm'},
+			{0, 0, 0, 0}
+		};
+		// 
+		c = getopt_long(argc, argv, "t:n:u:m:", long_options, &option_index);
+		if (c == -1){
+			//printf("End count: %d\n", count);
+			break;
+		}
+		count++;
+
+		printf("Current opt value: %c\n", (char) c);
 		// Do error checking
-		switch(opt){
+		switch(c){
 			// -type
 			case 't':
 				printf("File type: %s\n", optarg);
-				type = getFileType(*optarg);
-				if (type == -1){
+				*type = optarg; 
+				/*
+				if (type != 'f' || type != 'd' || type != 's' || type != 'c' || type != 'b'){
 					printf("No file type for option -type \"%s\"", optarg);
 					exit(EXIT_FAILURE);
 				}
-			// -name
+				*/
+				break;
+			// name
 			case 'n':
 				printf("File to look for: %s\n", optarg);
-				name = optarg;
-			// -user
+				*name = optarg;
+				break;
+			// user
 			case 'u':
 				printf("Owner of file: %s\n", optarg);
-				user = optarg;
-			// -maxdepth
+				*user = optarg;
+				break;
+			// maxdepth
 			case 'm':
 				printf("Look %s directories deep\n", optarg);
-				maxdepth = (int) *optarg - '0';
+				*maxdepth = (int) *optarg - '0';
+				break;
 		}
-
-		
-		 switch(opt){
-			// -type
-			case 't':
-				printf("File type: %s\n", optarg);
-				type = getFileType(*optarg);
-				if (type == -1){
-					printf("No file type for option -type \"%s\"", optarg);
-					exit(EXIT_FAILURE);
-				}
-			// -name
-			case 'n':
-				printf("File to look for: %s\n", optarg);
-				name = optarg;
-			// -user
-			case 'u':
-				printf("Owner of file: %s\n", optarg);
-				
-	*/	
+	
+		if (optind < argc) {
+               		printf("non-option ARGV-elements: ");
+               		while (optind < argc)
+                   		printf("%s ", argv[optind++]);
+               		printf("\n");
+          	}
+	
 	}
+
+}
 // Checks -file filetype given a valid argument
-int getFileType(char c){	
+int getFileType(char c){
 	switch(c){
 		// Regular Files
 		case 'f':
@@ -146,6 +151,4 @@ int fileSystemTests(char* file){
 	printf("Unknown file.\n");
 	return -1;
 }
-
-
 

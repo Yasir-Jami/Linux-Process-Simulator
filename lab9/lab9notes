@@ -1,0 +1,7 @@
+find: warning: you have specified the global option -maxdepth after the argument -name, but global options are not positional, i.e., -maxdepth affects tests specified before it as well as those specified after it.  Please specify global options before other arguments.
+
+
+can't put name after maxdepth, raise an error if they do
+
+
+./findme . --name file.c --type d --user bob --maxdepth 3

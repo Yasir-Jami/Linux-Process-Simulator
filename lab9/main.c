@@ -9,21 +9,27 @@
 int main(int argc, char* argv[]){	
 	// Require pathname
 	if (argc < 2){
-		printf("Usage: findme [type] [name] [user] [maxdepth] \n");	
+		printf("Usage: findme -type [arg] -name [arg] -user [arg] -maxdepth [arg]\n");
 		exit(EXIT_FAILURE);
 	}
 	// Arg defaults
 	//char* pathname = argv[1];; // current directory
 	char* pathname = ".";
-	char* type = "f"; // regular file
-	char* name = "*"; // any file - kind of essential though, so maybe I should stop the program if it is not provided
+	char* type = "f"; // regular file - change to any kind of file
+	char* name = "default"; // any filename
 	char* user = "jamiy2"; // my username
-	int maxdepth = 1; // Look only one directory deep	
+	int maxdepth = 1; // Look only one directory deep
 
-	//parseCommand(argc, argv, &type, &name, &user, &maxdepth);
+	parseCommands(argc, argv, &type, &name, &user, &maxdepth);
+	// Check for path validity
 	DIR* dir = opendir(pathname);
 	closedir(dir);
-		
+	
+	printf("\nCurrent type: %s\n", type);
+	printf("Current name: %s\n", name);
+	printf("Current user: %s\n", user);
+	printf("Current maxdepth: %d\n", maxdepth);
+
 	// Will use the order:
 	// 0 - Regular file 
 	// 1 - Directory
