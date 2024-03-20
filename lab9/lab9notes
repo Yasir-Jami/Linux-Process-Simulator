@@ -5,3 +5,51 @@ can't put name after maxdepth, raise an error if they do
 
 
 ./findme . --name file.c --type d --user bob --maxdepth 3
+
+
+
+
+
+void printFile(char* file, int type){
+        struct stat file_stat;
+        stat(file, &file_stat);
+
+        // Regular file
+        if (S_ISREG(file_stat.st_mode)){
+                return 0;
+        }
+        // Directory
+        else if (S_ISDIR(file_stat.st_mode)){
+                printf("Directory.\n");
+                return 1;
+        }
+        // Special character
+        else if (S_ISCHR(file_stat.st_mode)){
+                printf("Character Special.\n");
+                return 2;
+        }
+        // Special block
+        else if (S_ISBLK(file_stat.st_mode)){
+                printf("Block Special.\n");
+                return 3;
+        }
+        // Pipe or FIFO special file
+        else if (S_ISFIFO(file_stat.st_mode)){
+                printf("Pipe or FIFO special file.\n");
+                return 4;
+        }
+        // Symbolic link
+        else if (S_ISLNK(file_stat.st_mode)){
+                printf("Symbolic Link.\n");
+                return 5;
+        }
+        // Socket
+        else if (S_ISSOCK(file_stat.st_mode)){
+                printf("Socket.\n");
+                return 6;
+        }
+        // Realistically should never reach this point  
+        printf("Unknown file.\n");
+        return -1;
+}
+

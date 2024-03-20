@@ -24,22 +24,26 @@ void parseCommands(int argc, char* argv[], char** type, char** name, char** user
 	int c;
 	int count = 0;
 
+	printf("Number of args: %d\n", argc);
+
 	while (1){
 	        int option_index = 0;
 		static struct option long_options[] = 
 		{
-			{"type", required_argument, NULL, 'n'},
-			{"name", required_argument, NULL, 't'},
-			{"user", required_argument, NULL, 'u'},
-			{"maxdepth", required_argument, NULL, 'm'},
+			{"type", required_argument, NULL, 0},
+			{"name", required_argument, NULL, 0},
+			{"user", required_argument, NULL, 0},
+			{"maxdepth", required_argument, NULL, 0},
 			{0, 0, 0, 0}
 		};
-		// 
+
 		c = getopt_long(argc, argv, "t:n:u:m:", long_options, &option_index);
+		
 		if (c == -1){
 			//printf("End count: %d\n", count);
 			break;
 		}
+		
 		count++;
 
 		printf("Current opt value: %c\n", (char) c);
@@ -78,13 +82,12 @@ void parseCommands(int argc, char* argv[], char** type, char** name, char** user
                		while (optind < argc)
                    		printf("%s ", argv[optind++]);
                		printf("\n");
-          	}
-	
+          	}	
 	}
-
 }
-// Checks -file filetype given a valid argument
-int getFileType(char c){
+
+// Checks --type argument and returns an int
+int getFileArgType(char c){
 	switch(c){
 		// Regular Files
 		case 'f':
@@ -103,52 +106,36 @@ int getFileType(char c){
 			return 4;
 		// Either invalid file type, or not one of the file types above 
 		// (other types like pipe and socket are not accounted for)
+		// OR no type argument
 		default:
 			return -1;
 	}
 }
 
+// Get file's type
+int getFileType(char* file){
+        struct stat file_stat;
+        stat(file, &file_stat);
 
-int fileSystemTests(char* file){
-       	struct stat file_stat;
-	stat(file, &file_stat);
-
-	// Regular file
-	if (S_ISREG(file_stat.st_mode)){
-		return 0;
-	}
-	// Directory
-	else if (S_ISDIR(file_stat.st_mode)){
-		printf("Directory.\n");
-		return 1;
-	}
-	// Special character
-	else if (S_ISCHR(file_stat.st_mode)){
-		printf("Character Special.\n");
-		return 2;
-	}
-	// Special block
-	else if (S_ISBLK(file_stat.st_mode)){
-		printf("Block Special.\n");
-		return 3;
-	}
-	// Pipe or FIFO special file
-	else if (S_ISFIFO(file_stat.st_mode)){
-		printf("Pipe or FIFO special file.\n");
-		return 4;
-	}
-	// Symbolic link
-	else if (S_ISLNK(file_stat.st_mode)){
-		printf("Symbolic Link.\n");
-		return 5;
-	}
-	// Socket
-	else if (S_ISSOCK(file_stat.st_mode)){
-		printf("Socket.\n");
-		return 6;
-	}
-	// Realistically should never reach this point	
-	printf("Unknown file.\n");
-	return -1;
+        // Regular file
+        if (S_ISREG(file_stat.st_mode)){
+                return 0;
+        }
+        // Directory
+        else if (S_ISDIR(file_stat.st_mode)){ 
+                return 1;
+        }
+        // Symbolic link
+        else if (S_ISLNK(file_stat.st_mode)){
+                return 2;
+        }
+        // Block device 
+        else if (S_ISBLK(file_stat.st_mode)){
+                return 3;
+        }
+	// Character device 
+        else if (S_ISCHR(file_stat.st_mode)){
+                return 4;
+        }
+        return -1;
 }
-

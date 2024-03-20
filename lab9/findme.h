@@ -24,6 +24,9 @@ void parseCommands(int argc, char* argv[], char** type, char** name, char** user
  // 3 - Block Device
  // 4 - Character Device
  */
-int getFileType(char c);
+int getFileArgType(char c);
+
+int getFileType(char* file);
+
 
 #endif
