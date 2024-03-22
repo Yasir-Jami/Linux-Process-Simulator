@@ -126,7 +126,7 @@ int getFileType(char* file){
         return -1;
 }
 
-void dirprint(char* pathname, char* type, int depth, char* name){
+void dirprint(char* pathname, char* type, char* name, char* user, int depth){
 	if (depth == 0) {
 		return;
 	}
@@ -138,7 +138,7 @@ void dirprint(char* pathname, char* type, int depth, char* name){
 	dir = opendir(pathname);
 
 	if (dir == NULL) {
-		printf("Not a valid dir. Closing program\n");
+		printf("Not a valid dir. Closing program.\n");
 		exit(EXIT_FAILURE);
 	}
 
@@ -151,7 +151,7 @@ void dirprint(char* pathname, char* type, int depth, char* name){
 		strncat(fileloc, file->d_name, 100);
 		stat(fileloc, &buf);
 		if (getFileType(fileloc)==1) {
-			dirprint(fileloc, type, depth-1, name);
+			dirprint(fileloc, type, name, user, depth-1);
 		}
 		// Critical section here, each thread will handle printing a directory's contents
 		if ((getFileType(fileloc) == argtype) || argtype == -1){ // && file->d_name == name) {

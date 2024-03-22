@@ -29,17 +29,16 @@ int getFileArgType(char c);
 int getFileType(char* file);
 
 /*
-Prints all files of a specfied type
+Recursively searches through directories starting from pathname and prints all files of a specfied type
 
 Type can be:
-// -1 - No specified type (look for all files)
+ // -1 - No specified type (look for all files)
  // 0 - Regular file 
  // 1 - Directory
  // 2 - Symbolic Link
  // 3 - Block Device
  // 4 - Character Device
-
 */
-void dirprint(char* pathname, char* type, int maxdepth, char* name);
+void dirprint(char* pathname, char* type, char* name, char* user, int maxdepth);
 
 #endif

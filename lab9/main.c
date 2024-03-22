@@ -24,11 +24,12 @@ int main(int argc, char* argv[]){
 	pathname = argv[1];
 	type = ""; // File type: f - reg, d - dir, etc. - set to 0 by default to look for all file types
 	name = "0"; // Specified filename	
-	maxdepth = 10; // Height of directory search
+	maxdepth = 255; // Height of directory search
 
+	// Get arguments from command line, if there are any
 	parseCommands(argc, argv, &type, &name, &user, &maxdepth);
 	// Prints all directories
-	dirprint(pathname, type, maxdepth, name);
+	dirprint(pathname, type, name, user, maxdepth);
 
 	/*	
 	printf("Current type: %s\n", type);
