@@ -40,6 +40,6 @@ Type can be:
  // 4 - Character Device
 
 */
-void dirprint(char* pathname, char* type, int);
+void dirprint(char* pathname, char* type, int maxdepth, char* name);
 
 #endif

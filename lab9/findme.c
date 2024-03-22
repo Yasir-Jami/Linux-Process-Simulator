@@ -21,69 +21,55 @@ closedir(DIR *) - closes a directory
 
 //https://www.gnu.org/software/libc/manual/html_node/Getopt-Long-Option-Example.html	
 void parseCommands(int argc, char* argv[], char** type, char** name, char** user, int* maxdepth){
-	int c;
-	int count = 0;
-
-	printf("Number of args: %d\n", argc);
-
-	while (1){
-	        int option_index = 0;
-		static struct option long_options[] = 
+	int c;	
+	int option_index = 0;
+	int optind = 0; // Start optind at 0
+	static struct option long_options[] = 
 		{
-			{"type", required_argument, NULL, 0},
-			{"name", required_argument, NULL, 0},
-			{"user", required_argument, NULL, 0},
-			{"maxdepth", required_argument, NULL, 0},
-			{0, 0, 0, 0}
+			{"type", required_argument, NULL, 't'},
+			{"name", required_argument, NULL, 'n'},
+			{"user", required_argument, NULL, 'u'},
+			{"maxdepth", required_argument, NULL, 'm'},
+			{NULL, 0, NULL, 0}
 		};
 
-		c = getopt_long(argc, argv, "t:n:u:m:", long_options, &option_index);
-		
-		if (c == -1){
-			//printf("End count: %d\n", count);
-			break;
-		}
-		
-		count++;
-
-		printf("Current opt value: %c\n", (char) c);
-		// Do error checking
+	while ((c = getopt_long_only(argc, argv, "t:n:u:m:", long_options, &option_index)) !=-1){
 		switch(c){
 			// -type
-			case 't':
-				printf("File type: %s\n", optarg);
-				*type = optarg; 
-				/*
-				if (type != 'f' || type != 'd' || type != 's' || type != 'c' || type != 'b'){
+			case 't':	
+				*type = optarg;
+			       /*	
+				if (*type != 'f' || *type != 'd' || *type != 's' || *type != 'c' || *type != 'b'){
 					printf("No file type for option -type \"%s\"", optarg);
 					exit(EXIT_FAILURE);
-				}
+				}	
 				*/
 				break;
 			// name
 			case 'n':
-				printf("File to look for: %s\n", optarg);
 				*name = optarg;
 				break;
 			// user
-			case 'u':
-				printf("Owner of file: %s\n", optarg);
+			case 'u':	
 				*user = optarg;
 				break;
 			// maxdepth
 			case 'm':
-				printf("Look %s directories deep\n", optarg);
 				*maxdepth = (int) *optarg - '0';
 				break;
 		}
-	
-		if (optind < argc) {
-               		printf("non-option ARGV-elements: ");
-               		while (optind < argc)
-                   		printf("%s ", argv[optind++]);
-               		printf("\n");
-          	}	
+		optind++;
 	}
+
+	/*	
+	if (optind < argc) {
+               	printf("non-option ARGV-elements: ");
+               	while (optind < argc){
+              		printf("%s ", argv[optind++]);
+		}
+              	printf("\n");	
+          }
+	*/
 }
 
 // Checks --type argument and returns an int
@@ -140,7 +126,7 @@ int getFileType(char* file){
         return -1;
 }
 
-void dirprint(char* pathname, char* type, int depth){
+void dirprint(char* pathname, char* type, int depth, char* name){
 	if (depth == 0) {
 		return;
 	}
@@ -163,12 +149,12 @@ void dirprint(char* pathname, char* type, int depth){
 		strcpy(fileloc,pathname);
 		strncat(fileloc,"/",2);
 		strncat(fileloc, file->d_name, 100);
-		stat(fileloc,&buf);
-		// Critical section here, each thread will handle printing a directory's contents
-		if (getFileType(fileloc)==1) {	
-			dirprint(fileloc, type, depth-1);	
+		stat(fileloc, &buf);
+		if (getFileType(fileloc)==1) {
+			dirprint(fileloc, type, depth-1, name);
 		}
-		if (getFileType(fileloc) == argtype || argtype == -1) {
+		// Critical section here, each thread will handle printing a directory's contents
+		if ((getFileType(fileloc) == argtype) || argtype == -1){ // && file->d_name == name) {
 			printf("%s\n", fileloc);
 		}
 
