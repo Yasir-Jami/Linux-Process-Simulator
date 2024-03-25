@@ -4,7 +4,6 @@
 #include <sys/stat.h>
 #include <unistd.h>
 #include <dirent.h>
-#include <pwd.h>
 #include "findme.h"
 
 int main(int argc, char* argv[]){
@@ -14,17 +13,16 @@ int main(int argc, char* argv[]){
 		exit(EXIT_FAILURE);
 	}
 	char* pathname;	// argv[1]
-	char* type; // file type to look for
-	char* name; // file name
-	char* user; // owner of file
-	int maxdepth; // look maxdepth directories deep	
-	// Arg defaults	
-	struct passwd* p = getpwuid(getuid()); // use current username as default
-	user = p->pw_name;
+	char* type; // File type to look for
+	char* name; // Specified file name
+	char* user; // Owner of file
+	int maxdepth; // Height of directory search
+
 	pathname = argv[1];
 	type = ""; // File type: f - reg, d - dir, etc. - set to 0 by default to look for all file types
-	name = "0"; // Specified filename	
-	maxdepth = 255; // Height of directory search
+	name = "0"; 
+	user = ""; 
+	maxdepth = 255; 
 
 	// Get arguments from command line, if there are any
 	parseCommands(argc, argv, &type, &name, &user, &maxdepth);

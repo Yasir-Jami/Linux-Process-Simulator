@@ -41,4 +41,12 @@ Type can be:
 */
 void dirprint(char* pathname, char* type, char* name, char* user, int maxdepth);
 
+/* Checks if name argument was specified in command line.
+ */
+int checkName(char* name);
+
+/* Checks if user argument was specified in command line.
+ */
+int checkUser(char* user);
+
 #endif

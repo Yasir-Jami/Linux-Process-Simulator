@@ -7,6 +7,7 @@
 #include <stdlib.h>
 #include <dirent.h>
 #include <getopt.h>
+#include <pwd.h>
 #include "findme.h"
 
 /*
@@ -131,11 +132,14 @@ void dirprint(char* pathname, char* type, char* name, char* user, int depth){
 		return;
 	}
 	struct stat buf;
+	struct passwd *p;
 	DIR *dir;
 	struct dirent *file;
 	char fileloc[100];
 	int argtype = getFileArgType(*type);
 	dir = opendir(pathname);
+	int namecheck = checkName(name);
+	int usercheck = checkUser(user);
 
 	if (dir == NULL) {
 		printf("Not a valid dir. Closing program.\n");
@@ -154,11 +158,40 @@ void dirprint(char* pathname, char* type, char* name, char* user, int depth){
 			dirprint(fileloc, type, name, user, depth-1);
 		}
 		// Critical section here, each thread will handle printing a directory's contents
-		if ((getFileType(fileloc) == argtype) || argtype == -1){ // && file->d_name == name) {
+		if (((getFileType(fileloc) == argtype) || argtype == -1)){
+			// Check if name option was specified
+			if (namecheck == 1){
+				// Do not print if file's name does not match -name arg
+				if (strcmp(name, file->d_name) != 0){
+					continue;
+				}
+			}
+			// Check if user option was specified
+			if (usercheck == 1){
+				// Get uid of the file's owner
+				p = getpwuid(buf.st_uid);
+				if (strcmp(user, p->pw_name) != 0){
+					continue;
+				}
+			}
 			printf("%s\n", fileloc);
 		}
-
 	}
 	closedir(dir);
 }
 
+// Checks if name argument was specified
+int checkName(char* name){
+	if (strcmp(name, "0") == 0 || strcmp(name, "") == 0) return 0;
+	else {return 1;}
+	
+	return 0;
+}
+
+// Checks if user argument was specified
+int checkUser(char* user){
+	if (strcmp(user, "0") == 0 || strcmp(user, "") == 0) return 0;
+	else {return 1;}
+	
+	return 0;
+}
