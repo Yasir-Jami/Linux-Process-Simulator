@@ -1,5 +1,5 @@
 // Name: Yasir Jami & Cole Doris 
-// CMPT360 Lab 9
+// CMPT360 Lab 10 
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -133,10 +133,12 @@ void* printDirectories(void* args){
 	int namecheck = checkName(name);
 	int usercheck = checkUser(user);
 	// Glob - put glob call, size variable,  and size loop up here after
-	//if (namecheck == 1){
-		glob_t globbuf;
-		globbuf.gl_offs = 0;
-	//}	
+	glob_t globbuf;
+	globbuf.gl_offs = 0;	
+	
+	if (namecheck == 1){
+		
+	}	
 	
 	while((file = readdir(dir))) {
 		if ((strcmp(file->d_name,".") == 0) || (strcmp(file->d_name, "..") == 0)) {
@@ -154,25 +156,34 @@ void* printDirectories(void* args){
 		}
 
 		// Check if file's type matches -type argument 
-		if (((getFileType(fileloc) == argtype) || argtype == -1)){
+		if (((getFileType(fileloc) == argtype) || argtype == -1) && (d->ind == depth)){
+			//printf("Current fileloc: %s\n", fileloc);
 			// Check if name option was specified
-			if (namecheck == 1){ 
+			if (namecheck == 1){ 	
 				int glob_flag = 0; // 0 - File did not match glob, 1 - File matched glob
 				int size = 0; // Size of list of matched filenames 
-				int i = 0;
-
-				// Get list of filenames that matched glob
-				glob(name, GLOB_DOOFFS, NULL, &globbuf);
+				int i = 0; // Used to check each filename in glob list	
+				
+				// Build glob using file's path
+				char pathglob[strlen(fileloc)];
+				strcpy(pathglob, fileloc);
+				int j = strlen(pathglob);
+				while (pathglob[j] != '/'){
+					pathglob[j] = '\0';
+					j--;
+				}
+				strcat(pathglob, name);	
+							
+				// Get list of filenames that match glob
+				glob(pathglob, GLOB_DOOFFS, NULL, &globbuf);
 				while (globbuf.gl_pathv[size] != NULL){
 					size++;
 				}
-				//printf("Current glob: %s\n", name);
-	
+					
 				// Check against all file names that matched the glob
 				while (globbuf.gl_pathv[i]){
 					// Do not print if file's name does not match -name arg
-					//printf("Current filename: %s\n", globbuf.gl_pathv[i]);
-					if (strcmp(file->d_name, globbuf.gl_pathv[i]) == 0){
+					if (strcmp(fileloc, globbuf.gl_pathv[i]) == 0){
 						glob_flag = 1;
 						break;
 					}
@@ -189,10 +200,7 @@ void* printDirectories(void* args){
 					continue;
 				}
 			}
-
-			if (d->ind == depth){
-				printf("%s\n", fileloc);
-			}
+			printf("%s\n", fileloc);
 		}
 	}
 	closedir(dir);
@@ -216,13 +224,13 @@ void dirprint(char* pathname, char* type, char* name, char* user, int depth){
 
 	/*
 	if (strcmp(name, "0") != 0){
-		char* glob;
-		strcpy(glob, "./");
-		strcat(glob, name);
+		char* glob = "*";
+		//strcat(glob, name);
 		name = glob; // Of the pattern .*[nameglob]
+		printf("Current glob: %s\n", name);
 	}
 	*/
-
+	
 	// Thread creation
 	for (int i = 0; i < nprocs; i++){
 		args[i].pathname = pathname;

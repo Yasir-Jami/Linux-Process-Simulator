@@ -1,5 +1,5 @@
 // Name: Yasir Jami & Cole Doris
-// CMPT360 Lab 9 
+// CMPT360 Lab 10 
 
 #ifndef FINDME_H
 #define FINDME_H

@@ -1,8 +1,6 @@
 // Name: Yasir Jami & Cole Doris
 // CMPT360 Lab 10
 
-// TODO: Glob is being changed to the first occurrence of in the get_opt_long function
-
 #include <stdio.h>
 #include <stdlib.h>
 #include "findme.h"
@@ -27,7 +25,6 @@ int main(int argc, char* argv[]){
 
 	// Get arguments from command line if there are any
 	parseCommands(argc, argv, &type, &name, &user, &maxdepth);
-	printf("ORIGINAL NAME: %s\n", name);
 	// Prints all directories
 	dirprint(pathname, type, name, user, maxdepth);	
 	
