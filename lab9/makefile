@@ -6,8 +6,6 @@
 # Otherwise, name argument is expanded and substituted to the first filename in the current directory that matches the glob
 # Quotes are not necessary if you are just looking for a file name (-name main.c is fine)
 
-# Compile Q2's test program with: gcc -Wall -o test testGlob.c
-
 findme_OBJS:= main.o findme.o
 testGlob_OBJS:= testGlob.o
 

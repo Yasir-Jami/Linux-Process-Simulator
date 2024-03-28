@@ -132,13 +132,9 @@ void* printDirectories(void* args){
 	int argtype = getFileArgType(*type);
 	int namecheck = checkName(name);
 	int usercheck = checkUser(user);
-	// Glob - put glob call, size variable,  and size loop up here after
+	// Glob
 	glob_t globbuf;
-	globbuf.gl_offs = 0;	
-	
-	if (namecheck == 1){
-		
-	}	
+	globbuf.gl_offs = 0;
 	
 	while((file = readdir(dir))) {
 		if ((strcmp(file->d_name,".") == 0) || (strcmp(file->d_name, "..") == 0)) {
@@ -157,7 +153,6 @@ void* printDirectories(void* args){
 
 		// Check if file's type matches -type argument 
 		if (((getFileType(fileloc) == argtype) || argtype == -1) && (d->ind == depth)){
-			//printf("Current fileloc: %s\n", fileloc);
 			// Check if name option was specified
 			if (namecheck == 1){ 	
 				int glob_flag = 0; // 0 - File did not match glob, 1 - File matched glob
@@ -221,15 +216,6 @@ void dirprint(char* pathname, char* type, char* name, char* user, int depth){
 		exit(EXIT_FAILURE);
 	}
 	closedir(dir);
-
-	/*
-	if (strcmp(name, "0") != 0){
-		char* glob = "*";
-		//strcat(glob, name);
-		name = glob; // Of the pattern .*[nameglob]
-		printf("Current glob: %s\n", name);
-	}
-	*/
 	
 	// Thread creation
 	for (int i = 0; i < nprocs; i++){
@@ -241,15 +227,7 @@ void dirprint(char* pathname, char* type, char* name, char* user, int depth){
 		args[i].ind = depth-i; // start at top
                 pthread_create(&tid[i], NULL, printDirectories, &args[i]);
                 pthread_join(tid[i], NULL);
-        }
-
-	// After measuring using time.h, waiting after all threads are created is slower on average
-	// Also prints randomly
-	/*
-	for (int i = 0; i < nprocs; i++){
-		pthread_join(tid[i], NULL);
-	}
-	*/
+        }	
 }
 
 // Checks if name argument was specified
