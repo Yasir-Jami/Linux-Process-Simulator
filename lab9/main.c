@@ -1,5 +1,8 @@
 // Name: Yasir Jami & Cole Doris
-// CMPT360 Lab 9 
+// CMPT360 Lab 10
+
+
+// TODO: Need to
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -25,6 +28,7 @@ int main(int argc, char* argv[]){
 
 	// Get arguments from command line if there are any
 	parseCommands(argc, argv, &type, &name, &user, &maxdepth);
+	printf("ORIGIN NAME: %s\n", name);
 	// Prints all directories
 	dirprint(pathname, type, name, user, maxdepth);	
 	

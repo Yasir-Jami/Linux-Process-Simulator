@@ -10,6 +10,7 @@
 #include <pwd.h>
 #include <dirent.h>
 #include <pthread.h>
+#include <glob.h>
 #include "findme.h"
 
 //https://www.gnu.org/software/libc/manual/html_node/Getopt-Long-Option-Example.html
@@ -104,7 +105,7 @@ int getFileType(char* file){
 }
 
 // Function passed to a pthread to perform; prints contents of a directory
-void* printDirectories(void* args){	
+void* printDirectories(void* args){
 	struct dirargs* d = (struct dirargs*) args; // Struct holding CLI argument variables
 	if (d->depth == 0) {
 		return NULL;
@@ -131,6 +132,11 @@ void* printDirectories(void* args){
 	int argtype = getFileArgType(*type);
 	int namecheck = checkName(name);
 	int usercheck = checkUser(user);
+	// Glob - put glob call, size variable,  and size loop up here after
+	//if (namecheck == 1){
+		glob_t globbuf;
+		globbuf.gl_offs = 0;
+	//}	
 	
 	while((file = readdir(dir))) {
 		if ((strcmp(file->d_name,".") == 0) || (strcmp(file->d_name, "..") == 0)) {
@@ -150,16 +156,50 @@ void* printDirectories(void* args){
 		// Check if file's type matches -type argument 
 		if (((getFileType(fileloc) == argtype) || argtype == -1)){
 			// Check if name option was specified
-			if (namecheck == 1){
-				// Do not print if file's name does not match -name arg
-				if (strcmp(name, file->d_name) != 0){
-					continue;
+			if (namecheck == 1){ 
+				int glob_flag = 0; // 0 - File did not match glob, 1 - File matched glob
+				int size = 0; // Size of list of matched filenames 
+				int i = 0;
+
+				// Get list of filenames that matched glob
+				glob(name, GLOB_DOOFFS, NULL, &globbuf);
+				while (globbuf.gl_pathv[i] != NULL){
+					size++;
+					i++;
 				}
+				printf("Current glob: %s\n", name);
+
+				///////////////////////////////////
+				/*	
+				printf("Size of globbuf: %d\n", size);
+				while (i < size){
+					printf("Current filename: %s\n", globbuf.gl_pathv[i]);
+					i++;
+				}
+				*/
+				
+				i = 0;
+				///////////////////////////////////
+			
+				printf("Size of globbuf: %d\n", size);	
+				// Check against all file names that matched the glob
+				while (globbuf.gl_pathv[i]){
+					// Do not print if file's name does not match -name arg
+					//if (strcmp(fileloc, globbuf.gl_pathv[i]) == 0){
+					printf("Current filename: %s\n", globbuf.gl_pathv[i]);
+					if (strcmp(file->d_name, globbuf.gl_pathv[i]) == 0){
+						glob_flag = 1;
+						break;
+					}
+					i++;
+				}
+				// Go to next file if it does not match glob
+				if (glob_flag == 0){continue;}
 			}
 			// Check if user option was specified
 			if (usercheck == 1){
 				// Get uid of the file's owner and compare to -user arg
-				p = getpwuid(buf.st_uid);
+				p = getpwuid(buf.st_uid);	
 				if (strcmp(user, p->pw_name) != 0){
 					continue;
 				}
@@ -179,7 +219,7 @@ void dirprint(char* pathname, char* type, char* name, char* user, int depth){
 	int nprocs = get_nprocs(); // Number of processes
 	struct dirargs args[nprocs];// = malloc(sizeof(struct dirargs)); // Struct containing CLI arguments
         pthread_t tid[nprocs]; // Thread IDs
-	
+
 	// Check if directory exists first
 	DIR *dir = opendir(pathname);
 	dir = opendir(pathname);
@@ -188,6 +228,15 @@ void dirprint(char* pathname, char* type, char* name, char* user, int depth){
 		exit(EXIT_FAILURE);
 	}
 	closedir(dir);
+
+	/*
+	if (strcmp(name, "0") != 0){
+		char* glob;
+		strcpy(glob, "./");
+		strcat(glob, name);
+		name = glob; // Of the pattern .*[nameglob]
+	}
+	*/
 
 	// Thread creation
 	for (int i = 0; i < nprocs; i++){
