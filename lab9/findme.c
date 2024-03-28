@@ -1,26 +1,18 @@
-// Name: Yasir Jami (3077942)
+// Name: Yasir Jami & Cole Doris 
 // CMPT360 Lab 9
 
 #include <stdio.h>
+#include <stdlib.h>
 #include <string.h>
 #include <sys/stat.h>
-#include <stdlib.h>
-#include <dirent.h>
+#include <sys/sysinfo.h>
 #include <getopt.h>
 #include <pwd.h>
+#include <dirent.h>
+#include <pthread.h>
 #include "findme.h"
 
-/*
- 
-opendir(const char *) - opens a directory and returns an object of type DIR
-
-readdir(DIR *) - reads the content of a directory and returns an object of type dirent (struct)
-
-closedir(DIR *) - closes a directory
-
-*/
-
-//https://www.gnu.org/software/libc/manual/html_node/Getopt-Long-Option-Example.html	
+//https://www.gnu.org/software/libc/manual/html_node/Getopt-Long-Option-Example.html
 void parseCommands(int argc, char* argv[], char** type, char** name, char** user, int* maxdepth){
 	int c;	
 	int option_index = 0;
@@ -39,12 +31,6 @@ void parseCommands(int argc, char* argv[], char** type, char** name, char** user
 			// -type
 			case 't':	
 				*type = optarg;
-			       /*	
-				if (*type != 'f' || *type != 'd' || *type != 's' || *type != 'c' || *type != 'b'){
-					printf("No file type for option -type \"%s\"", optarg);
-					exit(EXIT_FAILURE);
-				}	
-				*/
 				break;
 			// name
 			case 'n':
@@ -56,21 +42,11 @@ void parseCommands(int argc, char* argv[], char** type, char** name, char** user
 				break;
 			// maxdepth
 			case 'm':
-				*maxdepth = (int) *optarg - '0';
+				*maxdepth = atoi(optarg);	
 				break;
 		}
 		optind++;
 	}
-
-	/*	
-	if (optind < argc) {
-               	printf("non-option ARGV-elements: ");
-               	while (optind < argc){
-              		printf("%s ", argv[optind++]);
-		}
-              	printf("\n");	
-          }
-	*/
 }
 
 // Checks --type argument and returns an int
@@ -99,7 +75,7 @@ int getFileArgType(char c){
 	}
 }
 
-// Get file's type
+// Get file's type given a string
 int getFileType(char* file){
         struct stat file_stat;
         stat(file, &file_stat);
@@ -127,37 +103,51 @@ int getFileType(char* file){
         return -1;
 }
 
-void dirprint(char* pathname, char* type, char* name, char* user, int depth){
-	if (depth == 0) {
-		return;
+// Function passed to a pthread to perform; prints contents of a directory
+void* printDirectories(void* args){	
+	struct dirargs* d = (struct dirargs*) args; // Struct holding CLI argument variables
+	if (d->depth == 0) {
+		return NULL;
 	}
+	char fileloc[500];
+	// CLI Variables
+	char* pathname = d->pathname;
+	char* type = d->type;
+	char* name = d->name;
+	char* user = d->user;
+	int depth = d->depth;
+	// Stat and pwd
 	struct stat buf;
 	struct passwd *p;
-	DIR *dir;
+	// Dirent
+	DIR *dir = opendir(pathname);
+	// Check if file is able to be looked through
+	if (NULL == dir){
+		fprintf(stderr, "Unable to open %s\n", pathname);
+		return NULL;
+	}
 	struct dirent *file;
-	char fileloc[100];
+	// Checks 
 	int argtype = getFileArgType(*type);
-	dir = opendir(pathname);
 	int namecheck = checkName(name);
 	int usercheck = checkUser(user);
-
-	if (dir == NULL) {
-		printf("Not a valid dir. Closing program.\n");
-		exit(EXIT_FAILURE);
-	}
-
+	
 	while((file = readdir(dir))) {
-		if ((strcmp(file->d_name,".") == 0) || (strcmp(file->d_name, "..")==0)) {
+		if ((strcmp(file->d_name,".") == 0) || (strcmp(file->d_name, "..") == 0)) {
 			continue;
 		}
-		strcpy(fileloc,pathname);
+		strcpy(fileloc, pathname);
 		strncat(fileloc,"/",2);
 		strncat(fileloc, file->d_name, 100);
 		stat(fileloc, &buf);
-		if (getFileType(fileloc)==1) {
-			dirprint(fileloc, type, name, user, depth-1);
+	
+		if (getFileType(fileloc)==1){ 
+			--(d->depth);
+			d->pathname = fileloc;
+			printDirectories(args);
 		}
-		// Critical section here, each thread will handle printing a directory's contents
+
+		// Check if file's type matches -type argument 
 		if (((getFileType(fileloc) == argtype) || argtype == -1)){
 			// Check if name option was specified
 			if (namecheck == 1){
@@ -168,16 +158,56 @@ void dirprint(char* pathname, char* type, char* name, char* user, int depth){
 			}
 			// Check if user option was specified
 			if (usercheck == 1){
-				// Get uid of the file's owner
+				// Get uid of the file's owner and compare to -user arg
 				p = getpwuid(buf.st_uid);
 				if (strcmp(user, p->pw_name) != 0){
 					continue;
 				}
 			}
-			printf("%s\n", fileloc);
+
+			if (d->ind == depth){
+				printf("%s\n", fileloc);
+			}
 		}
 	}
 	closedir(dir);
+
+        return NULL;
+}
+
+void dirprint(char* pathname, char* type, char* name, char* user, int depth){
+	int nprocs = get_nprocs(); // Number of processes
+	struct dirargs args[nprocs];// = malloc(sizeof(struct dirargs)); // Struct containing CLI arguments
+        pthread_t tid[nprocs]; // Thread IDs
+	
+	// Check if directory exists first
+	DIR *dir = opendir(pathname);
+	dir = opendir(pathname);
+	if (dir == NULL) {
+		printf("Not a valid dir. Closing program.\n");
+		exit(EXIT_FAILURE);
+	}
+	closedir(dir);
+
+	// Thread creation
+	for (int i = 0; i < nprocs; i++){
+		args[i].pathname = pathname;
+		args[i].type = type;
+		args[i].name = name;
+		args[i].user = user;
+		args[i].depth = depth;
+		args[i].ind = depth-i; // start at top
+                pthread_create(&tid[i], NULL, printDirectories, &args[i]);
+                pthread_join(tid[i], NULL);
+        }
+
+	// After measuring using time.h, waiting after all threads are created is slower on average
+	// Also prints randomly
+	/*
+	for (int i = 0; i < nprocs; i++){
+		pthread_join(tid[i], NULL);
+	}
+	*/
 }
 
 // Checks if name argument was specified
