@@ -29,13 +29,13 @@ void parseCommands(int argc, char* argv[], char** type, char** name, char** user
 
 	while ((c = getopt_long_only(argc, argv, "t:n:u:m:", long_options, &option_index)) !=-1){
 		switch(c){
-			// -type
+			// type
 			case 't':	
 				*type = optarg;
 				break;
 			// name
 			case 'n':
-				*name = optarg;
+				*name = optarg;	
 				break;
 			// user
 			case 'u':	
@@ -163,30 +163,15 @@ void* printDirectories(void* args){
 
 				// Get list of filenames that matched glob
 				glob(name, GLOB_DOOFFS, NULL, &globbuf);
-				while (globbuf.gl_pathv[i] != NULL){
+				while (globbuf.gl_pathv[size] != NULL){
 					size++;
-					i++;
 				}
-				printf("Current glob: %s\n", name);
-
-				///////////////////////////////////
-				/*	
-				printf("Size of globbuf: %d\n", size);
-				while (i < size){
-					printf("Current filename: %s\n", globbuf.gl_pathv[i]);
-					i++;
-				}
-				*/
-				
-				i = 0;
-				///////////////////////////////////
-			
-				printf("Size of globbuf: %d\n", size);	
+				//printf("Current glob: %s\n", name);
+	
 				// Check against all file names that matched the glob
 				while (globbuf.gl_pathv[i]){
 					// Do not print if file's name does not match -name arg
-					//if (strcmp(fileloc, globbuf.gl_pathv[i]) == 0){
-					printf("Current filename: %s\n", globbuf.gl_pathv[i]);
+					//printf("Current filename: %s\n", globbuf.gl_pathv[i]);
 					if (strcmp(file->d_name, globbuf.gl_pathv[i]) == 0){
 						glob_flag = 1;
 						break;
