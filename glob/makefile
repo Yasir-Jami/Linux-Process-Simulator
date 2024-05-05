@@ -1,5 +1,4 @@
-# Yasir Jami & Cole Doris 
-# CMPT 360 Lab 10
+# Authors: Yasir Jami & Cole Doris 
 
 # EXAMPLE USAGE OF GLOBBING: ./findme . -name "*.c"
 # If using a glob, name argument must be enclosed in quotes

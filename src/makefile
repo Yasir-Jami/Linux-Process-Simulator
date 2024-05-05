@@ -1,5 +1,4 @@
-# Name: Yasir Jami & Cole Doris
-# 360 Lab 5 (Group 4)
+# Authors: Yasir Jami & Cole Doris
 
 CC:= gcc
 CFLAGS:=-Wall -std=c11

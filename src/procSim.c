@@ -1,7 +1,5 @@
-/*
-Name: Yasir Jami & Cole Doris
-360 Lab 6 (Group 4)
-*/
+// Authors: Yasir Jami & Cole Doris
+
 // Pre-processor directives will be defined in procLib.h, so they can be used in procLib.c and procSim.c
 
 #include <stdio.h>

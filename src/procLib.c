@@ -1,7 +1,5 @@
-/* 
-Name: Yasir Jami & Cole Doris
-360 Lab 5 (Group 4)
-*/
+// Authors: Yasir Jami & Cole Doris 
+
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
