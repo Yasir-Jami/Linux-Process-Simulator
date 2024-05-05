@@ -1,7 +1,5 @@
 // Authors: Yasir Jami & Cole Doris
 
-// Pre-processor directives will be defined in procLib.h, so they can be used in procLib.c and procSim.c
-
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
@@ -14,20 +12,23 @@
 // 2: Running
 // 3: Complete
 
-int main(int argc, char* argv[]){
+int main(int argc, char* argv[])
+{
 	// Queues
 	struct node* ready_queue = NULL; // Holds processes ready to run
 	struct node* running_queue = NULL; // Holds processes that are running
 	struct node* temp = NULL; // Temporarily holds processes
 	int exit_flag = 1; // Determines process loop state
-	// 4 niceness queues for MLFQ
 	int priority = 5; // Determines priority queue to run
 	int array_size = 0; // Determines queue array size
+
+	// 5 niceness queues for MLFQ
 	struct node* niceness5_queue = NULL;
 	struct node* niceness4_queue = NULL;
-        struct node* niceness3_queue = NULL;
-        struct node* niceness2_queue = NULL;
-        struct node* niceness1_queue = NULL;
+    struct node* niceness3_queue = NULL;
+    struct node* niceness2_queue = NULL;
+    struct node* niceness1_queue = NULL;
+	
 	// Timing
 	double timer = 0.0; // Global timer
 	double time_dt = TIME_DT; // Time increment
@@ -56,12 +57,14 @@ int main(int argc, char* argv[]){
 	char pathname[] = "../log/logfile";
 	char date[16]  = __DATE__;
 	int i = 0;
+
 	while (date[i] != '\0'){
 		if (date[i] == ' '){
 			date[i] = '-';
 		}
 		i++;
 	}
+	
 	sprintf(filename, "%s-%s-%s", pathname, date, algorithm);
 	char* name = filename + strlen(pathname)+1; // Without pathname
 	printf("Using %s\n", algorithm);

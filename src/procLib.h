@@ -45,23 +45,22 @@ int check_queues(struct node** queue_array, int size);
  */
 void reset_queues(struct node** queue_array);
 
-
 /**
  * MLFQ - add all niceness queues to the array
  */
-void addToQueueArray(struct node** ready_queue, struct node* niceness5_queue, struct node** niceness4_queue, 
-		struct node** niceness3_queue, struct node** niceness2_queue, struct node** niceness1_queue)
+void addToQueueArray(struct node** ready_queue, struct node** niceness5_queue, struct node** niceness4_queue, 
+						struct node** niceness3_queue, struct node** niceness2_queue, struct node** niceness1_queue);
 
 /**
- * MLFQ - Lower process niceness and move it to its new niceneess queue
+ * MLFQ - Lower process niceness and move it to its new niceness queue
  */
 struct node* lowerProcessPriority(struct node** running_queue, struct node** niceness5_queue, struct node** niceness4_queue, 
-				struct node** niceness3_queue, struct node** niceness2_queue, struct node** niceness1_queue, int priority)
+									struct node** niceness3_queue, struct node** niceness2_queue, struct node** niceness1_queue, int priority);
 
 // Scheduling Algorithm Definitions
 	#define ALGOR ALGOR_MLFQ
-	#define TIME_DT 0.1 // Increment timer by this amount each cycle
-	#define TIME_JIFFY 1.0 // Time slice at which process rotates out of running queue 
+	#define TIME_DT 0.1 	// Increment timer by this amount each cycle
+	#define TIME_JIFFY 1.0  // Time slice at which process rotates out of running queue 
 	#define TIME_RESET 10.0 // Time at which all processes reset to their original niceness
 
 // Macros

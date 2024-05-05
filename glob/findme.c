@@ -12,7 +12,6 @@
 #include <glob.h>
 #include "findme.h"
 
-//https://www.gnu.org/software/libc/manual/html_node/Getopt-Long-Option-Example.html
 void parseCommands(int argc, char* argv[], char** type, char** name, char** user, int* maxdepth){
 	int c;	
 	int option_index = 0;
