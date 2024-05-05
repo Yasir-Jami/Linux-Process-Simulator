@@ -5,7 +5,6 @@ import os.path
 filename = sys.argv[1]
 displayWidth = 500
 
-
 def main(fn = filename):
     print(fn)
     file = open(fn)
@@ -13,8 +12,7 @@ def main(fn = filename):
     widths = getWidths(data, displayWidth)
     colours = []
     for dat in data:
-        colours.append(generateColour(dat[1]))
-    #file = open("lab02/log/") #  use for SS
+        colours.append(generateColour(dat[1])) 
     #file = open(os.path.dirname(__file__)+"\..\log")
     win = GraphWin("output", 700, 300)
     buffer = 100
@@ -29,15 +27,14 @@ def main(fn = filename):
         tex.draw(win)
             #i += 1
     
-    aTt = Text(Point(displayWidth/2,15),"Mean Turnaround Time: "+str(getAvgTt(data)))    
-    aRt = Text(Point(displayWidth/2,30),"Mean Response Time: "+str(getAvgRt(data)))
-    count = Text(Point(displayWidth/2,45),"Number of processes: "+str(getAmtProcs(data)))
+    aTt = Text(Point(displayWidth/2,15),"Mean Turnaround Time: "+str(getAvgTt(data))[0:5])    
+    aRt = Text(Point(displayWidth/2,30),"Mean Response Time: "+str(getAvgRt(data))[0:5])
+    count = Text(Point(displayWidth/2,45),"Number of processes: "+str(getAmtProcs(data))[0:4])
     
     aTt.draw(win)
     aRt.draw(win)
     count.draw(win)
-    
-    
+     
     #win.setBackground(color_rgb(r,g,b))
     win.getMouse()
     #img = Image()
@@ -54,9 +51,6 @@ def getWidths(data, maxWidth):
         if dat[2] != '1':
             totalTime += (dat[0])
     ratio = maxWidth / totalTime
-    
-    
-    
     widths = []
     
     runningproc = ''
@@ -72,11 +66,8 @@ def getWidths(data, maxWidth):
             
             runningproc = dat[1]
     
-    
     return widths
     
-
- 
 def getData(file):
     procs = []
     for line in file:
@@ -87,9 +78,7 @@ def getData(file):
         procs.append(numbers)
             
     return procs
- 
- 
- 
+  
 def generateColour(num):
     r = int(num%3%255)
     g = int(255 - 1/(r+1))
