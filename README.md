@@ -1,4 +1,4 @@
-# Linux Queue Simulator by Yasir Jami & Cole Doris
+# Linux Process Simulator by Yasir Jami & Cole Doris
 ### graphics.py written by John Zelle and released under the GPL:
 #### Source code: https://mcsp.wartburg.edu/zelle/python/graphics.py
 #### Reference: https://mcsp.wartburg.edu/zelle/python/graphics/graphics.pdf
