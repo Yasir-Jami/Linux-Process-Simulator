@@ -3,6 +3,6 @@ a.out
 *.swp
 *.o
 procSim
-logfile*
+logfile
 app
 l
