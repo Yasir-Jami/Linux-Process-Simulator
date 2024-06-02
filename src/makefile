@@ -1,23 +1,28 @@
-# Authors: Yasir Jami & Cole Doris
+# Authors: Yasir Jami & Cole Doris 
 
-CC:= gcc
-CFLAGS:=-Wall -std=c11
-SOURCE:=./src/
-OBJECT:=../obj/
+# EXAMPLE USAGE OF GLOBBING: ./findme . -name "*.c"
+# If using a glob, name argument must be enclosed in quotes
+# Otherwise, name argument is expanded and substituted to the first filename in the current directory that matches the glob
+# Quotes are not necessary if you are just looking for a file name (-name main.c is fine)
 
-procSim: procSim.o procLib.o dStruct.o
-	$(CC) -o $@ $(CFLAGS) $^ -lm
+findme_OBJS:=findmemain.o findme.o 
+procsim_OBJS:=dStruct.o procLib.o
+INC:=-I/../include/
 
-$(OBJECT)%.o: $(SOURCE)%.c
-	$(CC) $(CFLAGS) -c $< -o $@ -lm
+all: findme procSim
 
-# For testing specific behavior 
-#app: test.o dStruct.o
-#	$(CC) -o $@ $(CFLAGS) $^
+CC:=gcc
+CFLAGS:=-Wall -pthread
+
+findme: $(findme_OBJS) 
+	$(CC) $(CFLAGS) $(INC) -o $@ $^
+
+procSim: $(procsim_OBJS)
+	$(CC) $(CFLAGS) $(INC) -o $@ $^ -lm
+
+%.o: %.c
+	$(CC) $(CFLAGS) -c $< -o $@
 
 .PHONY: clean
-
 clean:
-	rm -f *.o app procSim
-cleanlog:
-	rm -f ../log/logfile*
+	rm -f *.o findme procSim 

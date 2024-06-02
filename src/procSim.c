@@ -1,4 +1,5 @@
 // Authors: Yasir Jami & Cole Doris
+// Main entry point for linux process simulator
 
 #include <stdio.h>
 #include <string.h>
@@ -25,9 +26,9 @@ int main(int argc, char* argv[])
 	// 5 niceness queues for MLFQ
 	struct node* niceness5_queue = NULL;
 	struct node* niceness4_queue = NULL;
-    struct node* niceness3_queue = NULL;
-    struct node* niceness2_queue = NULL;
-    struct node* niceness1_queue = NULL;
+    	struct node* niceness3_queue = NULL;
+    	struct node* niceness2_queue = NULL;
+    	struct node* niceness1_queue = NULL;
 	
 	// Timing
 	double timer = 0.0; // Global timer
