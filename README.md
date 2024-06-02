@@ -1,6 +1,9 @@
-# Process Queue Simulator by Yasir Jami & Cole Doris
+# Linux Queue Simulator by Yasir Jami & Cole Doris
+### graphics.py written by John Zelle and released under the GPL:
+#### Source code: https://mcsp.wartburg.edu/zelle/python/graphics.py
+#### Reference: https://mcsp.wartburg.edu/zelle/python/graphics/graphics.pdf
 
-### This is a program that simulates the queueing and running of processes in a UNIX-like system.
+### This is a program that simulates the queueing and running of processes on a Linux system.
 
 #### Files in the newProc directory represent processes and contain two values: niceness and proctime.
 - Niceness determines the process's priority (only for MLFQ).
